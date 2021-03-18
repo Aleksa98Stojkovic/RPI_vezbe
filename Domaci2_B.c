@@ -25,7 +25,7 @@ int main (int argc, char *argv[])
 	}
 	
 	printf("Unesite zeljeni temperaturni prag: ");
-	scanf("%f", prag);
+	scanf("%f", &prag);
 	
 	while(1)
 	{
@@ -57,5 +57,5 @@ int main (int argc, char *argv[])
 		}
 		
 	}
-	
+	return 0;
 }
