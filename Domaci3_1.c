@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/fcntl.h>
 #include <errno.h>
-#inclyde <wiringPi.h>
+#include <wiringPi.h>
 #include <lcd.h>
 
 #define COLUMNS 16
@@ -18,7 +18,7 @@ char dev_name[] = "/sys/devices/w1_bus_master1/28-0000088b54dc/w1_slave";
 int fd = -1, ret;
 char buffer[100];
 char *tmp1, tmp2[10];
-long value;
+long value, reminder;
 int lcd;
 
 int main (int argc, char *argv[])
@@ -50,12 +50,13 @@ int main (int argc, char *argv[])
 		tmp1 = strchr(buffer, 't');
 		sscanf(tmp1, "t=%s", tmp2);
 		value = atoi(tmp2);
+		reminder = value%1000;
 		value = value/1000;
 		
 		lcdPosition(lcd, 0, 0);
 		lcdPrintf(lcd, "Temperatura je:");
 		lcdPosition(lcd, 0, 1);
-		lcdPrintf(lcd, "%s", tmp2);
+		lcdPrintf(lcd, "%d.%dC", value, reminder);
 		delay(100);
 	}
 	
