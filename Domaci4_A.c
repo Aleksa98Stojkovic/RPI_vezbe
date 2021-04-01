@@ -93,7 +93,7 @@ void P8563_Readtime()
 	g8563_Store[1] = time[1] & 0x7f; // minuti
 	g8563_Store[2] = time[2] & 0x3f; // sati
 	g8563_Store[3] = time[3] & 0x3f; // dani
-	g8563_Store[4] = time[5] & 0x7f; // meseci
+	g8563_Store[4] = time[5] & 0x1f; // meseci
 	g8563_Store[5] = time[6]; // godine
 
 	g8563_Store[0] = changeHexToInt(g8563_Store[0]);
@@ -121,11 +121,6 @@ void Dec2String(unsigned char num, char *str)
 
 int main(int argc, char **argv)
 {
-	
-	char *str1 = "Sati: ";
-	char *str2 = " Minuti: ";
-	char *str3 = " Sekunde: ";
-	char nstr1[3], nstr2[3], nstr3[3];
 	
 	if(!bcm2835_init() || (wiringPiSetup() == -1))
 		return 1;
