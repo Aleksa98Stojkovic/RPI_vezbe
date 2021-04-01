@@ -122,11 +122,6 @@ void Dec2String(unsigned char num, char *str)
 int main(int argc, char **argv)
 {
 	
-	char *str1 = "Sati: ";
-	char *str2 = " Minuti: ";
-	char *str3 = " Sekunde: ";
-	char nstr1[3], nstr2[3], nstr3[3];
-	
 	if(!bcm2835_init() || (wiringPiSetup() == -1))
 		return 1;
 	
