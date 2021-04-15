@@ -16,7 +16,7 @@ int main(void)
 	while(1)
 	{
 		val = (val + 1) % MAX_VAL;
-		bcm2835_i2c_write((const char *)&b, 2);
+		bcm2835_i2c_write((const char *)&val, 2);
 		bcm2835_delay(50);
 	}
 	
