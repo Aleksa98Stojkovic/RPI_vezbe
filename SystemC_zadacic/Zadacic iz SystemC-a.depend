@@ -1,0 +1,78 @@
+# depslib dependency file v1.0
+1620232848 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/Zadacic iz SystemC-a/main.cpp
+	<iostream>
+	"RandGen.hpp"
+
+1620232871 /home/aleksa98stojkovic/Desktop/System_Level_Design/Zadacic iz SystemC-a/RandGen.hpp
+	<systemc>
+
+1620232938 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/Zadacic iz SystemC-a/RandGen.cpp
+	"RandGen.hpp"
+
+1620677483 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/RandGen.cpp
+	"RandGen.hpp"
+
+1620677400 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/RandGen.hpp
+	<systemc>
+
+1621109842 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/main.cpp
+	<iostream>
+	"Cache.hpp"
+	"Generator.hpp"
+
+1620236010 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/coll.hpp
+	<systemc>
+
+1620677474 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/coll.cpp
+	"coll.hpp"
+
+1620677147 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/system.hpp
+	<systemc>
+	"coll.hpp"
+	"RandGen.hpp"
+
+1620678086 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/system.cpp
+	"system.hpp"
+
+1620717873 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/tb.hpp
+	<systemc>
+	"system.hpp"
+
+1620677727 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/tb.cpp
+	"tb.hpp"
+
+1620718234 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/tb_temp.hpp
+	<systemc>
+	"RandGen.hpp"
+
+1620719469 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/tb_temp.cpp
+	"tb_temp.hpp"
+
+1621159419 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/Cache.hpp
+	<systemc>
+	<tlm>
+	<tlm_utils/simple_target_socket.h>
+	<tlm_utils/simple_initiator_socket.h>
+	"common.hpp"
+	"interfaces.hpp"
+
+1621107820 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/common.hpp
+
+1621159854 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/Cache.cpp
+	"Cache.hpp"
+	<tlm>
+
+1621110537 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/Generator.cpp
+	"Generator.hpp"
+
+1621109647 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/Generator.hpp
+	"common.hpp"
+	"Cache.hpp"
+	<systemc>
+	<tlm>
+	<tlm_utils/simple_initiator_socket.h>
+
+1621157186 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_zadacic/interfaces.hpp
+	<systemc>
+	"common.hpp"
+
