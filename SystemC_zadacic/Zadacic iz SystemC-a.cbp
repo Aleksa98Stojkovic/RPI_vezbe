@@ -42,8 +42,12 @@
 		</Compiler>
 		<Unit filename="Cache.cpp" />
 		<Unit filename="Cache.hpp" />
+		<Unit filename="DRAM_data.cpp" />
+		<Unit filename="DRAM_data.hpp" />
 		<Unit filename="Generator.cpp" />
 		<Unit filename="Generator.hpp" />
+		<Unit filename="PB.cpp" />
+		<Unit filename="PB.hpp" />
 		<Unit filename="common.hpp" />
 		<Unit filename="interfaces.hpp" />
 		<Unit filename="main.cpp" />

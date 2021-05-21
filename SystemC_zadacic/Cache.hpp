@@ -16,10 +16,13 @@
 #define CLK_PERIOD 10
 #define INVALID_ADDRESS 9
 #define CACHE_SIZE 9
-#define Y_LIMIT1 123
-#define Y_LIMIT2 122
+#define Y_LIMIT1 5
+#define Y_LIMIT2 4
 #define Y_LIMIT3 495
 #define Y_LIMIT4 494
+#define DATA_DEPTH 8
+#define DATA_HEIGHT 7
+#define DATA_WIDTH 6
 
 
 // Dodati jos jedan header sa zajednickim stvarima
@@ -37,11 +40,12 @@ class cache :
         sc_core::sc_port<DRAM_cache_if> DRAM_cache_port;
 
         /* WMEM <-> Cache interface */
-        sc_core::sc_port<WMEM_cache_if> WMEM_cache_port;
+        // sc_core::sc_port<WMEM_cache_if> WMEM_cache_port; // !!!!!!!!!**************
 
         /* PB <-> Cache interface */
         sc_core::sc_signal<sc_dt::uint64> stick_address_cache; // Sadrzi konkatenirane x i y indekse za trazeni stapic podataka
-        sc_core::sc_signal<bool> done_pb_cache;
+        sc_core::sc_out<bool> done_pb_cache;
+        sc_core::sc_port<cache_pb_if> cache_pb_port;
 
         /* Processor <-> Cache interface */
         tlm_utils::simple_target_socket<cache> PROCESS_soc;
@@ -49,13 +53,10 @@ class cache :
     protected:
 
         void compress_data_stick(type* data_stick, type* cache_mem_pos, unsigned char* compressed_stick_index, unsigned char &compressed_stick_lenght); // kompresuje podatke
-
-        type* stick_data_cache; // Adresa prvog elementa u stapicu
-        unsigned int stick_lenght_cache; // Duzina tog stapica podataka
+        void copy_cache_line(type* cache_mem_read_line, unsigned char &stick_lenght, type* cache_mem_start_address);
 
         // Deklaracija write i read funkcija za hijararhijski kanal
         void write_pb_cache(const sc_dt::uint64 &stick_address);
-        void read_pb_cache(type* stick_data, unsigned int &stick_lenght);
 
         // Procesi
         void read();
@@ -65,6 +66,7 @@ class cache :
         sc_core::sc_event read_enable;
         sc_core::sc_event write_enable;
         sc_core::sc_event start_event;
+        sc_core::sc_event start_read;
 
         /* Interconnedct <-> Cache interface */
         unsigned int start_address_address; // Pocetna adresa za tabelu pocetnih adresa
@@ -74,12 +76,15 @@ class cache :
         unsigned int max_y; // 124 ili 496
 
         // Unutrasnji resursi
-        type cache_mem[CACHE_SIZE * 64];
+        type cache_mem[CACHE_SIZE * DATA_DEPTH];
         unsigned int address_hash[CACHE_SIZE]; // x, y -> x * max(x) + y = x * 3 + y = 2 * x + x + y = (x << 1) + x + y
         unsigned char amount_hash[CACHE_SIZE];
-        unsigned int start_address[472]; // Cuva pocetne adrese blokova podataka
+        unsigned char cache_line_length[CACHE_SIZE];
+        unsigned int* start_address; // Cuva pocetne adrese blokova podataka
         bool write_en[CACHE_SIZE]; // Govori kada i koju liniju kesa moze da upisuje write
+        unsigned int write_cache_line;
         unsigned int x, y; // one ce da sacuvaju x i y dobijene preko b_transport_pb
+        type cache_mem_read_line[DATA_DEPTH];
 
         // TLM
         typedef tlm::tlm_base_protocol_types::tlm_payload_type pl_t;

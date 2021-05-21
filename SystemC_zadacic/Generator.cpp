@@ -5,13 +5,23 @@ using namespace tlm;
 using namespace sc_core;
 using namespace sc_dt;
 
-Generator::Generator(sc_module_name name) : sc_module(name), cache_mem("Cache")
+Generator::Generator(sc_module_name name) : sc_module(name)//, cache_mem("Cache")
 {
-    SC_METHOD(Test);
-    gen_soc.bind(cache_mem.PROCESS_soc);
+    // SC_METHOD(Test);
+    dram = new DRAM_data("DRAM"); // Pravim novi DRAM_data
+    pb = new PB("PB"); // Pravim novi PB
+    c = new cache("Cache");
+    c->DRAM_cache_port.bind(*dram);
+    pb->pb_cache_port.bind(*c);
+    c->cache_pb_port.bind(*pb);
+    pb->done_pb_cache.bind(signal_channel);
+    c->done_pb_cache.bind(signal_channel);
+    gen_soc.bind(c->PROCESS_soc);
+    signal_channel.write(true); // Inicijalizacija za done
     cout << "Kreiran je Generator!" << endl;
 }
 
+/*
 void Generator::Test()
 {
 
@@ -38,3 +48,4 @@ void Generator::Test()
     pl.set_data_length(length);
     gen_soc->b_transport(pl, offset);
 }
+*/
