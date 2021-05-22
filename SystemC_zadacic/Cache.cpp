@@ -22,7 +22,6 @@ cache::cache(sc_module_name name) :
     sensitive << start_read;
     // dont_initialize();
 
-
     /* ----------------------------------- */
     max_x = DATA_HEIGHT;
     max_y = DATA_WIDTH;
@@ -98,12 +97,13 @@ void cache::write()
 
     // Sad za ostatak
 
-    for(unsigned int x_i = 0; x_i < max_x; x_i++)
+    for(unsigned int x_i = 0; x_i < max_x - 2; x_i++)
     {
         for(unsigned int y_i = 0; y_i < max_y; y_i++)
         {
             for(unsigned int d = 0; d < 3; d++)
             {
+
                 if(x_i != 0 || (y_i >= 3))
                 {
                     // cout << "Cache::Dosao sam" << endl;
@@ -168,8 +168,8 @@ void cache::write()
                     }
 
                     // Iscitaj koji stick zeli read da procita
-                    unsigned int temp_x = (stick_address_cache.read() & 0xffffffff00000000) >> 32;
-                    unsigned int temp_y = stick_address_cache.read() & 0x00000000ffffffff;
+                    unsigned int temp_x = stick_address_cache >> 32;
+                    unsigned int temp_y = stick_address_cache & 0x00000000ffffffff;
 
                     // Ako je upisa stick koji read zeli, onda odblokiraj read
                     if(temp_x * max_y + temp_y == (x_i + d) * max_y + y_i)
@@ -198,19 +198,17 @@ void cache::read()
 
         // cout << "Cekam koji podatak PB zeli!" << endl;
 
-        cout << "Cache::Ovde sam zapucao!" << endl;
+        cout << "Cache::Read se zaustavio!" << endl;
         wait(); // ceka dok ne dobije neki podatak
-        cout << "Cache::Mosa!" << endl;
+        cout << "Cache::Read je nastavio sa radom!" << endl;
 
         // cout << "PB je rekao svoje!" << endl;
 
         // Izdvoji x i y adrese
-        unsigned int x = (stick_address_cache.read() & 0xffffffff00000000) >> 32;
-        unsigned int y = stick_address_cache.read()  & 0x00000000ffffffff;
+        unsigned int x = stick_address_cache >> 32;
+        unsigned int y = stick_address_cache & 0x00000000ffffffff;
 
         cout << "Cache::Od read se traze podaci: (" << x << ", " << y << ")" << endl;
-
-        // cout << "Trazimo na kojoj liniji kesa se nalazi podatak!" << endl;
 
         // Trazi na kojoj liniji kesa se nalazi podatak adresiran sa x i y
         /* --------------------------------------------- */
@@ -227,9 +225,7 @@ void cache::read()
         if(cache_line == INVALID_ADDRESS)
         {
             cout << "Cache::Invalidna adresa!" << endl;
-            // cout << "Nema tog podatka, cekamo da write odradi svoje!" << endl;
-            wait(read_enable); // write proces mora da digne event ako je upisao podataka sa adresom x * x_max + y, u stick_address_cache se nalaze koje x i y trazimo
-            // cout << "Write je uradio svoje!" << endl;
+            wait(read_enable); // write proces mora da digne event ako je upisao podataka sa adresom x * x_max + y, u stick_address_cache se nalaze koje x i y trazim
             // Write mora da javi read gde je upisao taj podatak
             cache_line = write_cache_line; // ovu promenljivu odredjuje write
         }
@@ -256,7 +252,9 @@ void cache::read()
         copy_cache_line(cache_mem_read_line, stick_length, stick_data_cache);
         stick_data_cache = cache_mem_read_line;
         cache_pb_port->write_cache_pb(&stick_data_cache, stick_length); // Ovako saljemo podatke ka PB
-        done_pb_cache.write(true);
+
+        bool done = done_pb_cache.read();
+        done_pb_cache.write(!done); // Ne koristimo bukvalno vrednost done signala, vec nam sluzi za generisanje dogadjaja
 
     }
 }
@@ -266,7 +264,7 @@ void cache::read()
 
 void cache::write_pb_cache(const uint64 &stick_address)
 {
-    stick_address_cache.write(stick_address); // Upisi x i y koje PB trazi
+    stick_address_cache = stick_address; // Upisi x i y koje PB trazi
     start_read.notify();
 }
 
@@ -277,7 +275,6 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
 
     uint64 address = pl.get_address();
     tlm_command cmd = pl.get_command();
-    // unsigned char* data = pl.get_data_ptr();
 
     switch(cmd)
     {
@@ -289,8 +286,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                 {
                     unsigned int* data = reinterpret_cast<unsigned int*>(pl.get_data_ptr());
                     *data = start_address_address;
-                    // unsigned char*
-                    // reinterpret_cast<unsigned char*> (data);
+
                     pl.set_response_status(TLM_OK_RESPONSE);
 
                     // offset += sc_time(CLK_PERIOD, SC_NS);
@@ -304,7 +300,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                     *data = (unsigned char)ack;
                     pl.set_response_status(TLM_OK_RESPONSE);
 
-                    offset += sc_time(CLK_PERIOD, SC_NS);
+                    offset += sc_time(50 * CLK_PERIOD, SC_NS);
 
                     break;
                 }
@@ -334,7 +330,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
 
                     ack = true;
 
-                    offset += sc_time(2 * CLK_PERIOD, SC_NS); // Samo adresa se salje, a ne cela tabela
+                    offset += sc_time(50 * CLK_PERIOD, SC_NS); // Samo adresa se salje, a ne cela tabela
 
                     break;
                 }
@@ -343,7 +339,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                     start_event.notify();
                     pl.set_response_status(TLM_OK_RESPONSE);
 
-                    offset += sc_time(CLK_PERIOD, SC_NS);
+                    offset += sc_time(50 * CLK_PERIOD, SC_NS);
 
                     break;
                 }
@@ -352,7 +348,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                     max_x = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
                     pl.set_response_status(TLM_OK_RESPONSE);
 
-                    offset += sc_time(CLK_PERIOD, SC_NS);
+                    offset += sc_time(50* CLK_PERIOD, SC_NS);
 
                     break;
                 }
@@ -361,7 +357,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                     max_y = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
                     pl.set_response_status(TLM_OK_RESPONSE);
 
-                    offset += sc_time(CLK_PERIOD, SC_NS);
+                    offset += sc_time(50 * CLK_PERIOD, SC_NS);
 
                     break;
                 }

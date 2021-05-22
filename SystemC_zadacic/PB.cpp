@@ -1,4 +1,5 @@
 #include "PB.hpp"
+#include <string>
 
 using namespace std;
 using namespace sc_core;
@@ -7,6 +8,7 @@ PB::PB(sc_module_name name) : sc_channel(name)
 {
     SC_THREAD(Test_proc);
     sensitive << done_pb_cache;
+    dont_initialize();
     cout << "Konstruisan je PB" << endl;
 }
 
@@ -29,33 +31,34 @@ void PB::Test_proc()
             {
                 for(int kh = 0; kh < 3; kh++)
                 {
-
-                    cout << "PB::Saljem adresu stapica koji zelim" << endl;
-                    cout << endl;
+                    // cout << endl;
                     cout << "-----------------------------" << endl;
 
                     cout << "PB::Adresa stapica je: (" << x + kh << ", " << y + kw << ")" << endl;
                     address = 0;
                     address |= (sc_dt::uint64)(x + kh) << 32;
                     address |= (sc_dt::uint64)(y + kw);
-                    wait(done_pb_cache.default_event()); // Desava se na opadajucu ivicu done signala
-                    cout << "PB::Desio se dogadjaj!" << endl;
+
+                    // cout << "PB::Adresa koja se salje je: " << (address >> 32) << " " << (address & 0x00000000ffffffff) << endl;
+
+                    // wait(done_pb_cache.default_event()); // Desava se na opadajucu ivicu done signala
                     pb_cache_port->write_pb_cache(address);
+                    cout << "PB::PB ceka na dogadjaj!" << endl;
 
                     wait(done_pb_cache.default_event()); // Desava se na rastucu ivicu done signala
 
-                    cout << "PB::Primljen je podatak iz kesa" << endl;
+                    // cout << "PB::Primljen je podatak iz kesa" << endl;
                     cout << endl;
-                    cout << "-----------------------------" << endl;
+                    // cout << "-----------------------------" << endl;
                     cout << "PB::Primljeni podaci su" << endl;
 
                     for(unsigned char i = 0; i < data_length; i++)
                         cout << data[i] << endl;
 
                     cout << endl;
-                    cout << "PB::Njihova duzina je: " << data_length << endl;
-                    cout << "-----------------------------" << endl;
-                    cout << endl;
+                    cout << "PB::Njihova duzina je: " << to_string(data_length) << endl;
+                    // cout << "-----------------------------" << endl;
+                    // cout << endl;
 
                     cout << "-----------------------------" << endl;
                     cout << endl;

@@ -15,7 +15,7 @@ DRAM_data::DRAM_data(sc_module_name name) : sc_channel(name)
 
     cout << "DRAM::Upisani podaci u DRAM_data" << endl;
 
-    for(int i = 0; i < TABLE_SIZE; i++)
+    for(int i = 0; i < DATA_HEIGHT; i++)
     {
         dram_table[i] = i * DATA_WIDTH * DATA_DEPTH; // x = 0, x = 1, x = 2,
     }

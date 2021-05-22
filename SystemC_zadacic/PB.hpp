@@ -5,10 +5,6 @@
 #include "common.hpp"
 #include "interfaces.hpp"
 
-#define DATA_DEPTH 8
-#define DATA_WIDTH 6
-#define DATA_HEIGHT 7
-
 class PB :
     public sc_core::sc_channel,
     public cache_pb_if

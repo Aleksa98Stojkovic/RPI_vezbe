@@ -16,14 +16,6 @@
 #define CLK_PERIOD 10
 #define INVALID_ADDRESS 9
 #define CACHE_SIZE 9
-#define Y_LIMIT1 5
-#define Y_LIMIT2 4
-#define Y_LIMIT3 495
-#define Y_LIMIT4 494
-#define DATA_DEPTH 8
-#define DATA_HEIGHT 7
-#define DATA_WIDTH 6
-
 
 // Dodati jos jedan header sa zajednickim stvarima
 
@@ -43,7 +35,7 @@ class cache :
         // sc_core::sc_port<WMEM_cache_if> WMEM_cache_port; // !!!!!!!!!**************
 
         /* PB <-> Cache interface */
-        sc_core::sc_signal<sc_dt::uint64> stick_address_cache; // Sadrzi konkatenirane x i y indekse za trazeni stapic podataka
+        sc_dt::uint64 stick_address_cache; // Sadrzi konkatenirane x i y indekse za trazeni stapic podataka
         sc_core::sc_out<bool> done_pb_cache;
         sc_core::sc_port<cache_pb_if> cache_pb_port;
 
