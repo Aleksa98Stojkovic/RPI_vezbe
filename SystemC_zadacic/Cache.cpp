@@ -83,14 +83,23 @@ void cache::write()
         compress_data_stick(stick_data, cache_mem + i * DATA_DEPTH, compressed_stick_index, compressed_stick_length);
         *(cache_line_length + i) = compressed_stick_length; // Upisi i duzinu linije kesa u neku memoriju
         address_hash[i] = (i / 3) * max_y + cnt; // (x, y) = x * max_y + y
-        amount_hash[i] = cnt + 1;
+        if(cnt == 0)
+        {
+            amount_hash[i] = 2 * W_kn;  // U hardveru petlja 'kn' je u potpunosti ramotana pa ne treba *kn, ovo je samo zbog softverskog modela
+        }
+        else
+        {
+            amount_hash[i] = 3 * W_kn;
+        }
+
         cnt = (cnt + 1) % 3; // 0, 1, 2, 0, 1, 2, ...
         write_en[i] = false;
 
         // cout << "Cache::Address_hash: " << address_hash[i] << endl;
         // cout << "Cache::Amount_hash: " << to_string(amount_hash[i]) << endl;
 
-        // WMEM_cache_port->write_WMEM_cache(compressed_stick_index, compressed_stick_length); // !!!!!!!!!!!!!!!******************
+        WMEM_cache_port->write_cache_WMEM(compressed_stick_index, compressed_stick_length,
+                                          address_hash[i], i);   // upisuje potrebne informacije u WMEM
     }
 
     // cout << "Cache::Zavrsio sam sa upisom prvobitnih podataka!" << endl;
@@ -145,23 +154,15 @@ void cache::write()
                     {
                         case 0:
                         case Y_LIMIT1:
-                        case Y_LIMIT3:
-                            {
-                            amount_hash[free_cache_line] = 1;
-                            }
-                            break;
-
-                        case 1:
                         case Y_LIMIT2:
-                        case Y_LIMIT4:
                             {
-                                amount_hash[free_cache_line] = 2;
+                                amount_hash[free_cache_line] = 2 * W_kn;
                             }
                             break;
 
                         default:
                             {
-                                amount_hash[free_cache_line] = 3;
+                                amount_hash[free_cache_line] = 3 * W_kn;
                             }
                             break;
 
@@ -175,7 +176,8 @@ void cache::write()
                     if(temp_x * max_y + temp_y == (x_i + d) * max_y + y_i)
                         read_enable.notify();
 
-                    // WMEM_cache_port->write_WMEM_cache(compressed_stick_index, compressed_stick_length); // !!!!!!!!!!!!!**************
+                    WMEM_cache_port->write_cache_WMEM(compressed_stick_index, compressed_stick_length,
+                                                      address_hash[free_cache_line], free_cache_line);   // upisuje potrebne informacije u WMEM
 
                 }
             }
@@ -236,6 +238,7 @@ void cache::read()
 
         // Umanji za jedan iskoristivost podatka
         amount_hash[cache_line]--;
+        cout << "Cache::Nakon ovog read, amount_hash je: " << to_string(amount_hash[cache_line]) << endl;
 
         /* --------------------------------------------- */
 

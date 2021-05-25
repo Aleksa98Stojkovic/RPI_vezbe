@@ -30,9 +30,17 @@ class DRAM_cache_if: virtual public sc_core::sc_interface
 class WMEM_cache_if: virtual public sc_core::sc_interface
 {
     public:
-        virtual void write_WMEM_cache(const unsigned char* compressed_stick_address, const unsigned char &compressed_stick_address_length) = 0;
+        virtual void write_cache_WMEM(const unsigned char* compressed_stick_address, const unsigned char &compressed_stick_address_length,
+                                      const unsigned int &address, const unsigned int &cache_line) = 0;
 };
 
+// Interfejs izmedju pb i memorije za tezine : WMEM IS TARGET
+class pb_WMEM_if: virtual public sc_core::sc_interface
+{
+    public:
+        virtual void read_pb_WMEM(type** compressed_weights, unsigned char &compressed_index_length, const unsigned int &x, const unsigned int &y,
+                                  const unsigned int &kn, const unsigned int &kh, const unsigned int &kw) = 0;
+};
 
 
 #endif
