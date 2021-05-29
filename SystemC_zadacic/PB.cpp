@@ -77,10 +77,6 @@ void PB::conv2D()
                             cout << endl;
                             cout << "PB::Primljeni su podaci iz kesa!" << endl;
 
-
-
-                            //   cout << "PB::Duzina tezina je: " << w_length << endl;
-
                             for(int kd = 0; kd < w_length; kd++)    // sam proracun
                                 sum += data[kd] * weights[kd];
 

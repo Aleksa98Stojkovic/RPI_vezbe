@@ -2,7 +2,6 @@
 #define GENERATOR_HPP_INCLUDED
 
 #include "common.hpp"
-// #include "Cache.hpp"
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_initiator_socket.h>
@@ -18,7 +17,6 @@ class Generator : public sc_core::sc_module
         SC_HAS_PROCESS(Generator);
         Generator(sc_core::sc_module_name);
 
-        // sc_core::sc_port<DRAM_cache_if> DRAM_port;
         tlm_utils::simple_initiator_socket<cache> gen_soc;
 
     protected:

@@ -158,3 +158,69 @@
 	"common.hpp"
 	"interfaces.hpp"
 
+1622311286 source:/home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/Cache.cpp
+	"Cache.hpp"
+	<tlm>
+	<string>
+
+1622310502 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/Cache.hpp
+	<systemc>
+	<tlm>
+	<tlm_utils/simple_target_socket.h>
+	<tlm_utils/simple_initiator_socket.h>
+	"common.hpp"
+	"interfaces.hpp"
+
+1622311175 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/common.hpp
+
+1622298163 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/interfaces.hpp
+	<systemc>
+	"common.hpp"
+
+1622310985 source:/home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/DRAM_data.cpp
+	"DRAM_data.hpp"
+	<string>
+
+1622310728 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/DRAM_data.hpp
+	<systemc>
+	<tlm>
+	<tlm_utils/simple_target_socket.h>
+	"interfaces.hpp"
+	"common.hpp"
+
+1622301923 source:/home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/Generator.cpp
+	"Generator.hpp"
+
+1622301848 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/Generator.hpp
+	"common.hpp"
+	<systemc>
+	<tlm>
+	<tlm_utils/simple_initiator_socket.h>
+	"DRAM_data.hpp"
+	"PB.hpp"
+	"Cache.hpp"
+	"Weights_mem.hpp"
+
+1622296006 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/PB.hpp
+	<systemc>
+	"common.hpp"
+	"interfaces.hpp"
+
+1622296006 /home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/Weights_mem.hpp
+	<systemc>
+	"common.hpp"
+	"interfaces.hpp"
+
+1621257004 source:/home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/main.cpp
+	<iostream>
+	"Cache.hpp"
+	"Generator.hpp"
+
+1622299490 source:/home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/PB.cpp
+	"PB.hpp"
+	<string>
+
+1622296006 source:/home/aleksa98stojkovic/Desktop/RPI_vezbe/SystemC_zadacic/Weights_mem.cpp
+	"Weights_mem.hpp"
+	<string>
+

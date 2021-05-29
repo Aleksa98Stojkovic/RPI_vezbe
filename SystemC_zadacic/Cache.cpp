@@ -9,10 +9,10 @@ using namespace sc_dt;
 
 cache::cache(sc_module_name name) :
     sc_channel(name),
-    //DRAM_soc("DRAM_soc"),
+    Cache_DRAM_soc("DRAM_soc"),
     PROCESS_soc("PROCESS_soc")
 {
-    //PB_soc.register_b_transport(this, &cache::b_transport_pb);
+
     PROCESS_soc.register_b_transport(this, &cache::b_transport_proc);
 
     SC_THREAD(write);
@@ -25,7 +25,7 @@ cache::cache(sc_module_name name) :
     /* ----------------------------------- */
     max_x = DATA_HEIGHT;
     max_y = DATA_WIDTH;
-
+    start_address_address = DATA_DEPTH * DATA_HEIGHT * DATA_WIDTH;
     /* ----------------------------------- */
 
     for(int i = 0; i < 9; i++)
@@ -43,8 +43,7 @@ void cache::compress_data_stick(type* data_stick, type* cache_mem_pos, unsigned 
     {
         if(data_stick[i] != 0)
         {
-            // [0, 1, 1, 0, 0, 0, -1] -> 1, 1, -1 | 1, 2, 6
-            *(cache_mem_pos + length) = data_stick[i];
+            cache_mem_pos[length] = data_stick[i];
             compressed_stick_index[length] = i;
             length++;
         }
@@ -57,7 +56,7 @@ void cache::copy_cache_line(type* cache_mem_read_line, unsigned char &stick_leng
 {
     for(int i = 0; i < stick_lenght; i++)
     {
-        cache_mem_read_line[i] = *(cache_mem_start_address + i);
+        cache_mem_read_line[i] = cache_mem_start_address[i];
     }
 }
 
@@ -65,24 +64,69 @@ void cache::copy_cache_line(type* cache_mem_read_line, unsigned char &stick_leng
 void cache::write()
 {
 
+    // Promenljive neophodne za tlm transakcije sa DRAM memorijom
+    pl_t pl;
+    uint64 tlm_address;
+    sc_time offset(0, SC_NS); // Za pocetak je inicijalizovano na 0 ns
+    tlm_command cmd;
+    unsigned char* tlm_data;
+
     // Inicijalno
 
-    DRAM_cache_port->read_DRAM_cache(&start_address, start_address_address); // Citam podatke iz DRAM-a
+    /* TLM transakcija */
+    cmd = TLM_READ_COMMAND;
+    pl.set_data_ptr(tlm_data);
+    pl.set_command(cmd);
+    tlm_address = start_address_address; // start_address_address = DRAM_TABLE
+    for(int i = 0; i < DATA_HEIGHT; i++)
+    {
+        pl.set_address(tlm_address + i);
+        cout << "Cache::tlm_address: " << tlm_address + i << endl;
+        Cache_DRAM_soc->b_transport(pl, offset); // Citam podatke iz DRAM-a
+        // cout << "Cache::Ajde vise" << endl;
+        if(pl.get_response_status() == TLM_OK_RESPONSE)
+            start_address[i] = *reinterpret_cast<unsigned int*>(tlm_data);
+        else
+            cout << "Cache::Transakcija neuspesna!" << endl;
+    }
+
+    cout << "Cache::Ovde crkavam" << endl;
+
+    for(int i = 0; i < DATA_HEIGHT; i++)
+        cout << "Cache::start_address je: " << start_address[i] << endl;
+
+
+
+
+    /* Kraj TLM transakcije */
+
     unsigned char compressed_stick_index[DATA_DEPTH]; // Niz u kom se nalaze indeksi nenultih elemenata unutar jednog stika
-    unsigned char compressed_stick_length; // Ovde ce se upisati duzina kompresovanog niza podataka
-    type* stick_data; // Pokazivac na stapic podataka
+    unsigned char compressed_stick_length;            // Ovde ce se upisati duzina kompresovanog niza podataka
+    type* stick_data;                                 // Pokazivac na stapic podataka
 
     // Prvo treba napuniti linije kesa
-    // cout << "Cache::Upisujem prvobitne podatke!" << endl;
-    // x : 0 -> 6 | y : 0 -> 5 | dubina je 8 || (0, 0) -> 0, (0, 1) -> 8, (0, 2) -> 16
-    // cout << "Cache::max_x je: " << max_x << endl;
     int cnt = 0;
     for(int i = 0; i < CACHE_SIZE; i++)
     {
-        DRAM_cache_port->read_DRAM_cache(&stick_data, start_address[i / (CACHE_SIZE / 2)] + cnt * DATA_DEPTH); // 0 - 63; (0, 0) | 64 - 127; (0, 1) | 128 - 255; (0, 2)...
+
+        /* TLM transakcija */
+        cmd = TLM_READ_COMMAND;
+        // cout << "Cache::Stigao sam dovde" << endl;
+        tlm_address = start_address[i / (CACHE_SIZE / 2)] + cnt * DATA_DEPTH; // start_address_address = DRAM_TABLE
+        // cout << "Cache::Stigao sam dovde" << endl;
+        pl.set_address(tlm_address);
+        pl.set_data_ptr(tlm_data);
+        pl.set_command(cmd);
+        Cache_DRAM_soc->b_transport(pl, offset);                              // Citam podatke iz DRAM-a
+        if(pl.get_response_status() == TLM_OK_RESPONSE)
+            stick_data = reinterpret_cast<type*>(tlm_data);
+        else
+            cout << "Cache::Transakcija neuspesna!" << endl;
+        /* Kraj TLM transakcije */
+
         compress_data_stick(stick_data, cache_mem + i * DATA_DEPTH, compressed_stick_index, compressed_stick_length);
-        cache_line_length[i] = compressed_stick_length; // Upisi i duzinu linije kesa u neku memoriju
-        address_hash[i] = (i / (CACHE_SIZE / 2)) * max_y + cnt; // 0, 1, 2, 3, 4
+        cache_line_length[i] = compressed_stick_length;
+        address_hash[i] = (i / (CACHE_SIZE / 2)) * max_y + cnt;
         if(cnt == 0)
         {
             amount_hash[i] = 2 * W_kn;  // U hardveru petlja 'kn' je u potpunosti ramotana pa ne treba *kn, ovo je samo zbog softverskog modela
@@ -99,16 +143,15 @@ void cache::write()
             }
         }
 
-        cnt = (cnt + 1) % (CACHE_SIZE / 2); // 0, 1, 2, 3, 4, 0, 1, 2, ...
+        cnt = (cnt + 1) % (CACHE_SIZE / 2);
         write_en[i] = false;
 
         WMEM_cache_port->write_cache_WMEM(compressed_stick_index, compressed_stick_length,
-                                          address_hash[i], i);   // upisuje potrebne informacije u WMEM
+                                          address_hash[i], i);
     }
 
+
     // Sad za ostatak dvoreda
-
-
     for(unsigned int y_i = CACHE_SIZE / 2; y_i < max_y; y_i++)
     {
         for(unsigned int d = 0; d < 2; d++)
@@ -124,7 +167,7 @@ void cache::write()
             if(!full)
             {
                 cout << "Cache::Write ceka na slobodno mesto!" << endl;
-                wait(write_enable); // Ovo treba da se desava samo ako je cache pun
+                wait(write_enable);
             }
 
 
@@ -141,9 +184,21 @@ void cache::write()
 
             cout << "Cache::Write cita podatak: " << "(" << d << ", " << y_i << ")" << endl;
 
-            DRAM_cache_port->read_DRAM_cache(&stick_data, start_address[d] + y_i * DATA_DEPTH);
+            /* TLM transakcija */
+            cmd = TLM_READ_COMMAND;
+            tlm_address = start_address[d] + y_i * DATA_DEPTH; // start_address_address = DRAM_TABLE
+            pl.set_address(tlm_address);
+            pl.set_data_ptr(tlm_data);
+            pl.set_command(cmd);
+            Cache_DRAM_soc->b_transport(pl, offset);           // Citam podatke iz DRAM-a
+            if(pl.get_response_status() == TLM_OK_RESPONSE)
+                stick_data = reinterpret_cast<type*>(tlm_data);
+            else
+                cout << "Cache::Transakcija neuspesna!" << endl;
+            /* Kraj TLM transakcije */
+
             compress_data_stick(stick_data, cache_mem + free_cache_line * DATA_DEPTH, compressed_stick_index, compressed_stick_length);
-            *(cache_line_length + free_cache_line) = compressed_stick_length; // cache_line_length[free_cache_line] = ...
+            *(cache_line_length + free_cache_line) = compressed_stick_length;
             address_hash[free_cache_line] = d * max_y + y_i;
             write_en[free_cache_line] = false;
 
@@ -175,13 +230,12 @@ void cache::write()
 
             cout << "CACHE::adresa koja se salje WMEM-u je: " << to_string(address_hash[free_cache_line]) << endl;
             WMEM_cache_port->write_cache_WMEM(compressed_stick_index, compressed_stick_length,
-                                              address_hash[free_cache_line], free_cache_line);   // upisuje potrebne informacije u WMEM
+                                              address_hash[free_cache_line], free_cache_line);
         }
     }
 
 
     // Sada normalno
-
     for(unsigned int x_i = 0; x_i < max_x - 1; x_i++)
     {
         for(unsigned int y_i = 0; y_i < max_y; y_i++)
@@ -202,7 +256,7 @@ void cache::write()
                     if(!full)
                     {
                         cout << "Cache::Write ceka na slobodno mesto!" << endl;
-                        wait(write_enable); // Ovo treba da se desava samo ako je cache pun
+                        wait(write_enable);
                     }
 
 
@@ -219,9 +273,21 @@ void cache::write()
 
                     cout << "Cache::Write cita podatak: " << "(" << x_i + d << ", " << y_i << ")" << endl;
 
-                    DRAM_cache_port->read_DRAM_cache(&stick_data, start_address[x_i + d] + y_i * DATA_DEPTH);
+                    /* TLM transakcija */
+                    cmd = TLM_READ_COMMAND;
+                    tlm_address = start_address[x_i + d] + y_i * DATA_DEPTH; // start_address_address = DRAM_TABLE
+                    pl.set_address(tlm_address);
+                    pl.set_data_ptr(tlm_data);
+                    pl.set_command(cmd);
+                    Cache_DRAM_soc->b_transport(pl, offset);                 // Citam podatke iz DRAM-a
+                    if(pl.get_response_status() == TLM_OK_RESPONSE)
+                        stick_data = reinterpret_cast<type*>(tlm_data);
+                    else
+                        cout << "Cache::Transakcija neuspesna!" << endl;
+                    /* Kraj TLM transakcije */
+
                     compress_data_stick(stick_data, cache_mem + free_cache_line * DATA_DEPTH, compressed_stick_index, compressed_stick_length);
-                    *(cache_line_length + free_cache_line) = compressed_stick_length; // cache_line_length[free_cache_line] = ...
+                    *(cache_line_length + free_cache_line) = compressed_stick_length;
                     address_hash[free_cache_line] = (x_i + d) * max_y + y_i;
                     write_en[free_cache_line] = false;
 
@@ -253,7 +319,7 @@ void cache::write()
 
                     cout << "CACHE::adresa koja se salje WMEM-u je: " << to_string(address_hash[free_cache_line]) << endl;
                     WMEM_cache_port->write_cache_WMEM(compressed_stick_index, compressed_stick_length,
-                                                      address_hash[free_cache_line], free_cache_line);   // upisuje potrebne informacije u WMEM
+                                                      address_hash[free_cache_line], free_cache_line);
                 }
             }
         }
@@ -273,13 +339,10 @@ void cache::read()
             flag = false;
         }
 
-        // cout << "Cekam koji podatak PB zeli!" << endl;
 
         cout << "Cache::Read se zaustavio!" << endl;
-        wait(); // ceka dok ne dobije neki podatak
+        wait(); // ceka dok PB ne zatrazi neki podatak
         cout << "Cache::Read je nastavio sa radom!" << endl;
-
-        // cout << "PB je rekao svoje!" << endl;
 
         // Izdvoji x i y adrese
         unsigned int x = stick_address_cache >> 32;
@@ -289,7 +352,6 @@ void cache::read()
 
         // Trazi na kojoj liniji kesa se nalazi podatak adresiran sa x i y
         /* --------------------------------------------- */
-
         unsigned int cache_line = INVALID_ADDRESS;
         for(int i = 0; i < CACHE_SIZE; i++)
         {
@@ -299,22 +361,19 @@ void cache::read()
 
 
         // Proveri da li si nasao ipak taj podatak
-        if(cache_line == INVALID_ADDRESS)
+        if(cache_line == (unsigned int)INVALID_ADDRESS)
         {
             cout << "Cache::Invalidna adresa!" << endl;
-            wait(read_enable); // write proces mora da digne event ako je upisao podataka sa adresom x * x_max + y, u stick_address_cache se nalaze koje x i y trazim
-            // Write mora da javi read gde je upisao taj podatak
-            cache_line = write_cache_line; // ovu promenljivu odredjuje write
+            wait(read_enable);                          // write proces mora da digne event ako je upisao podataka sa adresom x * x_max + y
+            cache_line = write_cache_line;              // ovu promenljivu odredjuje write
         }
 
         cout << "Cache::Linija kesa na kojoj se nalazi trazeni podatak: " << cache_line << endl;
-
         /* --------------------------------------------- */
 
         // Umanji za jedan iskoristivost podatka
         amount_hash[cache_line]--;
         cout << "Cache::Nakon ovog read, amount_hash je: " << to_string(amount_hash[cache_line]) << endl;
-
         /* --------------------------------------------- */
 
         // Proveri da li moze write da upisuje novu liniju
@@ -329,10 +388,10 @@ void cache::read()
         unsigned char stick_length = cache_line_length[cache_line];
         copy_cache_line(cache_mem_read_line, stick_length, stick_data_cache);
         stick_data_cache = cache_mem_read_line;
-        cache_pb_port->write_cache_pb(&stick_data_cache, stick_length); // Ovako saljemo podatke ka PB
+        cache_pb_port->write_cache_pb(&stick_data_cache, stick_length);         // Ovako saljemo podatke ka PB
 
         bool done = done_pb_cache.read();
-        done_pb_cache.write(!done); // Ne koristimo bukvalno vrednost done signala, vec nam sluzi za generisanje dogadjaja
+        done_pb_cache.write(!done);                                             // Ne koristimo bukvalno vrednost done signala, vec nam sluzi za generisanje dogadjaja
 
     }
 }
@@ -342,7 +401,7 @@ void cache::read()
 
 void cache::write_pb_cache(const uint64 &stick_address)
 {
-    stick_address_cache = stick_address; // Upisi x i y koje PB trazi
+    stick_address_cache = stick_address;
     start_read.notify();
 }
 
@@ -351,112 +410,65 @@ void cache::write_pb_cache(const uint64 &stick_address)
 void cache::b_transport_proc(pl_t& pl, sc_time& offset)
 {
 
+    // Kada s pise, onda se pise sve odjednom, a ne posebno da se upisuje u svaki registar
+
     uint64 address = pl.get_address();
     tlm_command cmd = pl.get_command();
 
-    switch(cmd)
+    if(cmd == TLM_WRITE_COMMAND)
     {
-        case TLM_READ_COMMAND:
+
+        switch(address)
         {
-            switch(address)
+            case START_ADDRESS_ADDRESS:
             {
-                case START_ADDRESS_ADDRESS: // Ova situacija je samo za debug
-                {
-                    unsigned int* data = reinterpret_cast<unsigned int*>(pl.get_data_ptr());
-                    *data = start_address_address;
+                start_address_length = pl.get_data_length();
+                start_address_address = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
+                pl.set_response_status(TLM_OK_RESPONSE);
 
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    // offset += sc_time(CLK_PERIOD, SC_NS);
-
-                    break;
-                }
-
-                case ACK:
-                {
-                    unsigned char* data = pl.get_data_ptr();
-                    *data = (unsigned char)ack;
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    offset += sc_time(50 * CLK_PERIOD, SC_NS);
-
-                    break;
-                }
-                default:
-
-                    pl.set_response_status(TLM_ADDRESS_ERROR_RESPONSE);
-                    cout << "Cache::Error while trying to read data" << endl;
-
-                    break;
+                break;
             }
+            case START:
+            {
+                start_event.notify();
+                pl.set_response_status(TLM_OK_RESPONSE);
 
-            break;
+                break;
+            }
+            case MAX_X:
+            {
+                max_x = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
+                pl.set_response_status(TLM_OK_RESPONSE);
+
+                break;
+            }
+            case MAX_Y:
+            {
+                max_y = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
+                pl.set_response_status(TLM_OK_RESPONSE);
+
+                break;
+            }
+            case RELU:
+            {
+                relu = (bool)(*(reinterpret_cast<unsigned int*>(pl.get_data_ptr())));
+                pl.set_response_status(TLM_OK_RESPONSE);
+
+                break;
+            }
+            default:
+
+                pl.set_response_status(TLM_ADDRESS_ERROR_RESPONSE);
+                cout << "Cache::Error while trying to write data" << endl;
+
+                break;
         }
 
-        case TLM_WRITE_COMMAND:
-        {
-            switch(address)
-            {
-                case START_ADDRESS_ADDRESS:
-                {
-                    start_address_length = pl.get_data_length();
-                    start_address_address = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    cout << "Cache::" << start_address_address << endl;
-                    cout << start_address_length << endl;
-
-                    ack = true;
-
-                    offset += sc_time(50 * CLK_PERIOD, SC_NS); // Samo adresa se salje, a ne cela tabela
-
-                    break;
-                }
-                case START:
-                {
-                    start_event.notify();
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    offset += sc_time(50 * CLK_PERIOD, SC_NS);
-
-                    break;
-                }
-                case MAX_X:
-                {
-                    max_x = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    offset += sc_time(50* CLK_PERIOD, SC_NS);
-
-                    break;
-                }
-                case MAX_Y:
-                {
-                    max_y = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    offset += sc_time(50 * CLK_PERIOD, SC_NS);
-
-                    break;
-                }
-                default:
-
-                    pl.set_response_status(TLM_ADDRESS_ERROR_RESPONSE);
-                    cout << "Cache::Error while trying to write data" << endl;
-
-                    break;
-            }
-
-            break;
-
-        }
-        default:
-
-            pl.set_response_status(TLM_COMMAND_ERROR_RESPONSE);
-            cout << "Cache::Wrong command!" << endl;
-
-            break;
-
-
+        offset += sc_time(55 * CLK_PERIOD, SC_NS); // Kasnjenje komunikacije softvera i IP je oko 50 clk, a jos 5 clk treba da se upisu podaci
+    }
+    else
+    {
+        pl.set_response_status(TLM_COMMAND_ERROR_RESPONSE);
+        cout << "Cache::Wrong command!" << endl;
     }
 }

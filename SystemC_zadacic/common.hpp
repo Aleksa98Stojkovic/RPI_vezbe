@@ -11,6 +11,7 @@
 #define W_kh 3
 #define W_kw 3
 #define W_kd 4
+#define CLK_PERIOD 10
 
 typedef float type;
 

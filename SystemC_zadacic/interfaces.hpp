@@ -18,14 +18,6 @@ class cache_pb_if: virtual public sc_core::sc_interface
         virtual void write_cache_pb(type** stick_data, unsigned char &stick_lenght) = 0;
 };
 
-// Interfejs izmedju kesa i DRAM-a : CACHE IS INITIATOR
-class DRAM_cache_if: virtual public sc_core::sc_interface
-{
-    public:
-        virtual void read_DRAM_cache(type** stick_data, const unsigned int &address) = 0; // Za podatke
-        virtual void read_DRAM_cache(unsigned int** address_data, const unsigned int &address) = 0; // Za tabelu pocetnih adresa
-};
-
 // Interfejs izmedju kesa i memorije za tezine : CACHE IS INITIATOR
 class WMEM_cache_if: virtual public sc_core::sc_interface
 {
