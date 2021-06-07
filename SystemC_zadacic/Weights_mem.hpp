@@ -19,7 +19,8 @@ class WMEM :
 
         void write_cache_WMEM(const unsigned char* compressed_stick_address, const unsigned char &compressed_stick_address_length,
                               const unsigned int &address, const unsigned int &cache_line);
-        void read_pb_WMEM(type** compressed_weights, unsigned char &compressed_index_length, const unsigned int &x, const unsigned int &y,
+        void valid_cache_line(const unsigned int &cache_line);
+        void read_pb_WMEM(type** compressed_weights, unsigned char &compressed_index_length,
                           const unsigned int &kn, const unsigned int &kh, const unsigned int &kw);
 
         type W[W_kn][W_kw][W_kh][W_kd]; // 2 paketa od 9 stapica sa po 2 podatka
@@ -27,6 +28,10 @@ class WMEM :
         unsigned int data_stick_address[CACHE_SIZE];
         unsigned int y_max;
         unsigned int compressed_index_len[CACHE_SIZE];
+        unsigned int wmem_cache_line;
+        unsigned char local_length;
+        unsigned char local_index[DATA_DEPTH];
+        type local_weights[DATA_DEPTH];
 
 };
 

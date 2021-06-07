@@ -26,17 +26,14 @@ WMEM::WMEM(sc_module_name name) : sc_channel(name)
             }
         }
     }
-
 }
 
 void WMEM::write_cache_WMEM(const unsigned char* compressed_stick_address, const unsigned char &compressed_stick_address_length,
                             const unsigned int &address, const unsigned int &cache_line)
 {
-    // cout << "WMEM::compressed_stick_address: " << endl;
     for(int i = 0; i < compressed_stick_address_length; i++)
     {
         compressed_index_memory[cache_line * DATA_DEPTH + i] = compressed_stick_address[i]; // npr. dubina 3, 0-2: prvi stapic, 3-5: drugi stapic...
-        // cout << to_string(compressed_stick_address[i]) << endl;
     }
 
     cout << "WMEM::adresa koja je primljena od Cache-a je: " << to_string(address) << endl;
@@ -45,28 +42,32 @@ void WMEM::write_cache_WMEM(const unsigned char* compressed_stick_address, const
 
 }
 
-void WMEM::read_pb_WMEM(type** compressed_weights, unsigned char &compressed_index_length, const unsigned int &x, const unsigned int &y,
+void WMEM::valid_cache_line(const unsigned int &cache_line)
+{
+    wmem_cache_line = cache_line;
+
+    local_length = compressed_index_len[wmem_cache_line];
+
+    for(int i = 0; i < local_length; i++)
+    {
+        local_index[i] = compressed_index_memory[wmem_cache_line * DATA_DEPTH + i];
+    }
+
+}
+
+void WMEM::read_pb_WMEM(type** compressed_weights, unsigned char &compressed_index_length,
                         const unsigned int &kn, const unsigned int &kh, const unsigned int &kw)
 {
-    int cache_line = -1;
-    // type weights_stick[DATA_DEPTH];
 
-    // cout << "WMEM::x i y su (" << x << ", " << y << ")" << endl;
-    for(int i = 0; i < CACHE_SIZE; i++)
+    cout << "WMEM::Linija kesa koja je dobije je: " << wmem_cache_line << endl;
+
+    compressed_index_length = local_length;
+    for(int i = 0; i < local_length; i++)
     {
-        if(data_stick_address[i] == x * y_max + y)
-            cache_line = i;                         // razmisliti o situaciji kada nema slobodne linije
-    }
-    // cout << "WMEM::cache_line: " << cache_line << endl;
-
-    compressed_index_length = 0;
-
-    for(int i = 0; i < (int)compressed_index_len[cache_line]; i++)
-    {
-        compressed_index_length++;
+        local_weights[i] = W[kn][kh][kw][local_index[i]];
     }
 
-    *compressed_weights = &W[kn][kh][kw][compressed_index_memory[cache_line * DATA_DEPTH]];
+    *compressed_weights = local_weights;
 
 
 }

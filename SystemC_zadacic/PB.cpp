@@ -4,7 +4,7 @@
 using namespace std;
 using namespace sc_core;
 
-PB::PB(sc_module_name name) : sc_channel(name)
+PB::PB(sc_module_name name) : sc_channel(name), offset(0, SC_NS)
 {
     SC_THREAD(conv2D);
     sensitive << done_pb_cache;
@@ -17,8 +17,9 @@ PB::PB(sc_module_name name) : sc_channel(name)
     cout << "Konstruisan je PB" << endl;
 }
 
-void PB::write_cache_pb(type** stick_data, unsigned char &stick_lenght)
+void PB::write_cache_pb(type** stick_data, unsigned char &stick_lenght, sc_time &offset_cache)
 {
+    offset += offset_cache;
     data = *stick_data;
     data_length = stick_lenght;
 }
@@ -30,6 +31,7 @@ void PB::conv2D()
     type sum;   // promenljiva za akumulaciju rezultata jednog izlaznog piksela (64)
     type* weights;
     unsigned char w_length;
+
 
     for(int x = 0; x < DATA_HEIGHT; x++)
     {
@@ -58,29 +60,28 @@ void PB::conv2D()
                         {
                             cout << "-----------------------------" << endl;
 
-          //                  cout << "PB::Adresa stapica je: (" << x_i << ", " << y_i << ")" << endl;
                             address = 0;
                             address |= (sc_dt::uint64)(x_i) << 32;
                             address |= (sc_dt::uint64)(y_i);
 
-                            pb_WMEM_port->read_pb_WMEM(&weights, w_length, x_i, y_i, kn, kh, kw);   // trazimo odgovarajuce tezine
+                            pb_cache_port->read_pb_cache(address, offset);                          // zahtevamo podatke o ulazu iz kesa
+
+                            offset += sc_time(1 * CLK_PERIOD, SC_NS);
+
+                            wait(done_pb_cache.default_event());                                    // desava se na svaku ivicu signala done
+
+                            pb_WMEM_port->read_pb_WMEM(&weights, w_length, kn, kh, kw);             // trazimo odgovarajuce tezine
 
                             cout << "PB::procitane tezine su: " << endl;
                             for(int i = 0; i < w_length; i++)
                                 cout << weights[i] << endl;
 
-                            pb_cache_port->write_pb_cache(address);     // zahtevamo podatke o ulazu iz kesa
-                            cout << "PB::PB ceka na dogadjaj!" << endl;
-
-                            wait(done_pb_cache.default_event());        // desava se na svaku ivicu signala done
-
                             cout << endl;
-                            cout << "PB::Primljeni su podaci iz kesa!" << endl;
 
-                            for(int kd = 0; kd < w_length; kd++)    // sam proracun
+                            for(int kd = 0; kd < w_length; kd++)                                    // sam proracun
                                 sum += data[kd] * weights[kd];
 
-                            cout << "-----------------------------" << endl;
+                            cout << endl;
 
                         }
                     }

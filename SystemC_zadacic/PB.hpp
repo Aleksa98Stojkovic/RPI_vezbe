@@ -20,13 +20,14 @@ class PB :
 
     protected:
 
+        sc_core::sc_time offset;
         type* data;
         unsigned char data_length;
         bool relu;
         type OFM[DATA_HEIGHT][DATA_WIDTH][W_kn];    // ovo nije deo hardvera (sluzi samo za modelovanje)
         type bias[W_kn];                            // u hardveru ce biti biasi za sve konvolucije i neophodno je da procesor posalje info o kojoj konvoluciji se radi
         void conv2D();                              // implementira proracun konvolucije
-        void write_cache_pb(type** stick_data, unsigned char &stick_lenght);
+        void write_cache_pb(type** stick_data, unsigned char &stick_lenght, sc_core::sc_time &offset_cache);
 };
 
 #endif // PB_HPP_INCLUDED
