@@ -48,8 +48,6 @@
 		<Unit filename="Generator.hpp" />
 		<Unit filename="PB.cpp" />
 		<Unit filename="PB.hpp" />
-		<Unit filename="Weights_mem.cpp" />
-		<Unit filename="Weights_mem.hpp" />
 		<Unit filename="common.hpp" />
 		<Unit filename="interfaces.hpp" />
 		<Unit filename="main.cpp" />

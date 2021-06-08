@@ -7,7 +7,7 @@
 
 class DRAM_data :
     public sc_core::sc_channel,
-    public cache_DRAM_if
+    public DRAM_cache_if
 {
     public:
 
@@ -15,8 +15,11 @@ class DRAM_data :
 
     protected:
 
-        dram_word dram[(DATA_DEPTH / 5 + 1) * DATA_WIDTH * DATA_HEIGHT + DATA_HEIGHT];        // DRAM memorija
-        void read_cache_DRAM(dram_word* data, const unsigned int &address, sc_core::sc_time &offset);    // funkcija za citanje iz dram memorije
+        type dram_data[DATA_DEPTH * DATA_WIDTH * DATA_HEIGHT]; // Sadrzi podatke o ulazu
+        unsigned int dram_table[DATA_HEIGHT]; // Sadrzi podatke o pocetnim adresama
+
+        void read_DRAM_cache(type** stick_data, const unsigned int &address);
+        void read_DRAM_cache(unsigned int** address_data, const unsigned int &address);
 };
 
 

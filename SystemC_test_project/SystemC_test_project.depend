@@ -1,0 +1,59 @@
+# depslib dependency file v1.0
+1623156820 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/main.cpp
+	"Add.h"
+	"Conv2D.h"
+	"load_store.h"
+	"Normalization.h"
+	"Pixel_Shuffle.h"
+	<stack>
+	"common.h"
+	<cmath>
+
+1619519096 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Add.cpp
+	"Add.h"
+
+1619519108 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Add.h
+	"common.h"
+
+1623156475 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/common.h
+	<systemc>
+	<vector>
+	<iostream>
+	<string>
+	<cstdlib>
+	<cmath>
+
+1623056345 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Conv2D.cpp
+	"Conv2D.h"
+	<unistd.h>
+	<iomanip>
+	<algorithm>
+
+1619630827 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Conv2D.h
+	"common.h"
+
+1619470100 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/load_store.cpp
+	"load_store.h"
+
+1619470100 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/load_store.h
+	<fstream>
+	<string>
+	<sstream>
+	"common.h"
+
+1619470100 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Normalization.cpp
+	"Normalization.h"
+
+1619470100 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Normalization.h
+	"common.h"
+
+1619519122 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Pixel_Shuffle.cpp
+	"Pixel_Shuffle.h"
+
+1619519113 /home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Pixel_Shuffle.h
+	"common.h"
+
+1623145312 source:/home/aleksa98stojkovic/Desktop/System_Level_Design/SystemC_test_project/Quantization.cpp
+	"common.h"
+	<cmath>
+
