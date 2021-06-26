@@ -60,10 +60,10 @@ void cache::write()
     delete data;
 
 
-    cout << "WRITE::Vreme koje je proteklo da se procita start_address: " << offset << endl;
+    cout << "WRITE::Elapsed time: " << offset << endl;
 
 
-    // Citanje ostatka ulaza
+    // Remaining
     int cache_init = 0;
     unsigned char free_cache_line;
 
@@ -80,9 +80,9 @@ void cache::write()
                     data = new dram_word;
                     cache_DRAM_port->read_cache_DRAM(data, start_address[x_i + d] + y_i * (DATA_DEPTH / 5 + 1), offset);
                     write_cache(data, cache_mem + free_cache_line * (DATA_DEPTH / 5 + 1));
-                    cout << "WRITE::Vreme koje je proteklo da se procita jedan stapic podataka: " << offset << endl;
+                    cout << "WRITE::Elapsed time: " << offset << endl;
                     delete data;
-                //    address_hash[free_cache_line] = (x_i + d) * max_y + y_i;
+                    // address_hash[free_cache_line] = (x_i + d) * max_y + y_i;
                     if((y_i == 0) || (y_i == DATA_WIDTH - 1))
                     {
                         amount_hash[free_cache_line] = 1;
@@ -99,7 +99,7 @@ void cache::write()
                         }
                     }
 
-                    cout << "WRITE::amount_hash je: " << to_string(amount_hash[free_cache_line]) << endl;
+                    cout << "WRITE::amount_hash is: " << to_string(amount_hash[free_cache_line]) << endl;
 
                     cache_init++;
 
@@ -109,7 +109,7 @@ void cache::write()
 
                     if(!counter)
                     {
-                        cout << "WRITE::Write ceka na slobodno mesto!" << endl;
+                        cout << "WRITE::Write is waiting for free cache line!" << endl;
                         wait(write_enable);
 
                         if(last_cache)
@@ -118,13 +118,13 @@ void cache::write()
                             counter = W_kh;
                     }
 
-                    cout << "WRITE::Write cita podatak: " << "(" << x_i + d << ", " << y_i << ")" << endl;
+                    cout << "WRITE::Write is reading data: " << "(" << x_i + d << ", " << y_i << ")" << endl;
                     data = new dram_word;
                     cache_DRAM_port->read_cache_DRAM(data, start_address[x_i + d] + y_i * (DATA_DEPTH / 5 + 1), offset);
-                    cout << "WRITE::Vreme koje je proteklo da se procita jedan stapic podataka: " << offset << endl;
+                    cout << "WRITE::Elapsed time: " << offset << endl;
                     write_cache(data, cache_mem + free_cache_line * (DATA_DEPTH / 5 + 1));
                     delete data;
-                //    address_hash[free_cache_line] = (x_i + d) * max_y + y_i;
+                    // address_hash[free_cache_line] = (x_i + d) * max_y + y_i;
 
                     switch(y_i)
                     {
@@ -150,7 +150,7 @@ void cache::write()
 
                     }
 
-                    cout << "WRITE::amount_hash je: " << to_string(amount_hash[free_cache_line]) << endl;
+                    cout << "WRITE::amount_hash is: " << to_string(amount_hash[free_cache_line]) << endl;
 
                     counter--;
                 }
