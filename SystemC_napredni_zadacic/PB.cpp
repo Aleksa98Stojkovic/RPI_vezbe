@@ -80,6 +80,11 @@ void PB::conv2D()
         }
     }
 
+    /* ovde setovati interrupt */
+    /* U konstruktoru PB-a treba staviti taj interrupt signal na fasle */
+    /* U hpp fajlu treba definisati jedan bool signal koji ce predstavljati interrupt */
+    /* Ovo je interrupt samo za gotovu obradu */
+
     cout << endl << endl << endl << endl;
     cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << endl << endl;
 

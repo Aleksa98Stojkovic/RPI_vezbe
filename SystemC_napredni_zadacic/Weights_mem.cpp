@@ -9,6 +9,11 @@ using namespace tlm;
 
 WMEM::WMEM(sc_module_name name) : sc_channel(name)
 {
+
+    PROCESS_soc.register_b_transport(this, &WMEM::b_transport_proc);
+
+    /* setujes signal za prekid */
+
     cout << "WMEM::Konstruisan je WMEM!" << endl;
 
     int cnt = 0;
@@ -59,13 +64,19 @@ void WMEM::b_transport_proc(pl_t& pl, sc_core::sc_time& offset)
             start_address_wmem = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
             pl.set_response_status(TLM_OK_RESPONSE);
         }
+        else if(address == MEM2WRITE)
+        {
+            mem2write = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
+            pl.set_response_status(TLM_OK_RESPONSE);
+        }
         else
         {
+
             pl.set_response_status(TLM_ADDRESS_ERROR_RESPONSE);
             cout << "WMEM::Wrong address!" << endl;
         }
 
-        offset += sc_time(61 * CLK_PERIOD, SC_NS);
+        offset += sc_time(1 * CLK_PERIOD, SC_NS);
     }
     else
     {

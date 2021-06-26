@@ -49,10 +49,14 @@
 		<Unit filename="Cache.hpp" />
 		<Unit filename="DRAM_data.cpp" />
 		<Unit filename="DRAM_data.hpp" />
-		<Unit filename="Generator.cpp" />
-		<Unit filename="Generator.hpp" />
+		<Unit filename="Interconnect.cpp" />
+		<Unit filename="Interconnect.hpp" />
 		<Unit filename="PB.cpp" />
 		<Unit filename="PB.hpp" />
+		<Unit filename="TB.cpp" />
+		<Unit filename="TB.hpp" />
+		<Unit filename="VP.cpp" />
+		<Unit filename="VP.hpp" />
 		<Unit filename="Weights_mem.cpp" />
 		<Unit filename="Weights_mem.hpp" />
 		<Unit filename="common.hpp" />

@@ -7,8 +7,6 @@
 #include "common.hpp"
 #include "interfaces.hpp"
 
-#define START_ADDRESS_WMEM 0x01
-
 class WMEM :
     public sc_core::sc_channel,
     public pb_WMEM_if
@@ -26,11 +24,13 @@ class WMEM :
 
         type W[W_kn][W_kw][W_kh][W_kd]; // 2 paketa od 9 stapica sa po 2 podatka
         unsigned int start_address_wmem;
+        bool mem2write;
 
         // TLM
         typedef tlm::tlm_base_protocol_types::tlm_payload_type pl_t;
         void b_transport_proc(pl_t&, sc_core::sc_time&);
 
+        /* jedan signal za prekid */
 };
 
 

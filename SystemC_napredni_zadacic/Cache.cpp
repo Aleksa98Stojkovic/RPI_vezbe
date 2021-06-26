@@ -359,13 +359,6 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
 
                     break;
                 }
-                case DEPTH:
-                {
-                    depth = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
-                    pl.set_response_status(TLM_OK_RESPONSE);
-
-                    break;
-                }
                 case RELU:
                 {
                     relu = *(reinterpret_cast<unsigned int*>(pl.get_data_ptr()));
@@ -381,7 +374,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                     break;
             }
 
-            offset += sc_time(66 * CLK_PERIOD, SC_NS); // Samo adresa se salje, a ne cela tabela
+            offset += sc_time(6 * CLK_PERIOD, SC_NS); // Samo adresa se salje, a ne cela tabela
 
             break;
 

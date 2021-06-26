@@ -8,13 +8,6 @@
 #include "interfaces.hpp"
 #include "DRAM_data.hpp"
 
-#define START_ADDRESS_ADDRESS 0x1
-#define START 0x2
-#define HEIGHT 0x3
-#define WIDTH 0x4
-#define DEPTH 0x5
-#define RELU 0x6
-
 // Dodati jos jedan header sa zajednickim stvarima
 
 class cache :
@@ -59,8 +52,7 @@ class cache :
         /* Interconnedct <-> Cache interface */
         unsigned int start_address_address; // Pocetna adresa za tabelu pocetnih adresa
         unsigned int height; // Sadrzi vrednost broja redoav u slici
-        unsigned int width; // 124 ili 496
-        unsigned int depth;
+        unsigned int width;
         bool relu;
 
         // Unutrasnji resursi
