@@ -8,7 +8,7 @@ using namespace sc_dt;
 Interconnect::Interconnect(sc_module_name name) : sc_module(name)
 {
     CPU_soc.register_b_transport(this, &Interconnect::b_transport_cpu);
-    cout << "Interconnect::Kreiran je Interconnect!" << endl;
+    cout << "Interconnect::Interconnect constructed!" << endl;
 }
 
 void Interconnect::b_transport_cpu(pl_t &pl, sc_core::sc_time &offset)

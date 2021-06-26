@@ -5,7 +5,7 @@ using namespace sc_core;
 
 DRAM_data::DRAM_data(sc_module_name name) : sc_channel(name)
 {
-    cout << "DRAM::Konstruisan je DRAM_data!" << endl;
+    cout << "DRAM::DRAM_data constructed!" << endl;
 
     int j_len;
     int len;
@@ -63,18 +63,18 @@ DRAM_data::DRAM_data(sc_module_name name) : sc_channel(name)
         cnt++;
     }
 
-    cout << "DRAM::Upisani su podaci u DRAM" << endl;
+    cout << "DRAM::Finished writing data into DRAM." << endl;
 }
 
 void DRAM_data::read_cache_DRAM(dram_word* data, const unsigned int &address, sc_time &offset)
 {
     /*
-        Adrese:
+        Addresses:
             0 - ((DATA_DEPTH / 5 + 1) * DATA_WIDTH * DATA_HEIGHT - 1) = DRAM_data
             (DATA_DEPTH / 5 + 1) * DATA_WIDTH * DATA_HEIGHT - ((DATA_DEPTH / 5 + 1) * DATA_WIDTH * DATA_HEIGHT + DATA_HEIGHT) = DRAM_table
     */
 
-    cout << "DRAM::Citanje DRAM-a na adresi: " << address << endl;
+    cout << "DRAM::Reading DRAM data on address: " << address << endl;
 
     switch(address)
     {
@@ -85,7 +85,6 @@ void DRAM_data::read_cache_DRAM(dram_word* data, const unsigned int &address, sc
             for(int i = 0; i < (DATA_DEPTH / 5 + 1); i++)
             {
                 data[i] = dram[address + i];
-                // cout << "#DRAM::Procitani podaci iz memorije su: " << dram[address + i] << endl;
             }
 
             break;
@@ -102,7 +101,7 @@ void DRAM_data::read_cache_DRAM(dram_word* data, const unsigned int &address, sc
             break;
 
         default:
-            cout << "DRAM::Invalidna adresa!" << endl;
+            cout << "DRAM::Invalid address!" << endl;
             break;
 
     }

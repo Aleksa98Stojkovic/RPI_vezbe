@@ -31,9 +31,7 @@ cache::cache(sc_module_name name) :
         line.push_back(i);
     }
 
-
-    // done_pb_cache.write(true);
-    cout << "Cache::Napravljen je Cache modul!" << endl;
+    cout << "Cache::Cache constructed!" << endl;
 }
 
 void cache::write_cache(dram_word* data, dram_word* cache_line)
@@ -45,37 +43,15 @@ void cache::write_cache(dram_word* data, dram_word* cache_line)
 }
 
 
-/*
-
-Racunanje write trouhput-a:
-
-1. Odrediti kasnjenja za write i read
-2. Sta se desava ako imamo cache miss
-3. Vreme treba da tece globalno
-4. Read i Wrute mogu da rade paralelno, pa treba izbeci dvostruko racunanje vremena
-
-
-*/
-
-// proces
 void cache::write()
 {
-
-    /*
-
-    Kasnjenje Write funkcije
-    Inicijalno_kasnjenje / 3 + broj_stanja * Tclk + 13 * Tclk
-
-    */
 
     dram_word* data;
     int counter = 0;
 
-    // Inicijalno
+    // Initial
     data = new dram_word[DATA_HEIGHT];
-    cache_DRAM_port->read_cache_DRAM(data, start_address_address, offset); // Citam podatke iz DRAM-a
-
-    /* Upisivanje podataka u start_address */
+    cache_DRAM_port->read_cache_DRAM(data, start_address_address, offset); // Reading data from DRAM-a
 
     for(int i = 0; i < DATA_HEIGHT; i++)
     {
@@ -83,7 +59,6 @@ void cache::write()
     }
     delete data;
 
-    /* Kraj upisivanja podataka u start_address */
 
     cout << "WRITE::Vreme koje je proteklo da se procita start_address: " << offset << endl;
 
@@ -187,17 +162,9 @@ void cache::write()
     }
 }
 
-// proces
+
 void cache::read()
 {
-
-    /*
-
-    Kasnjenje Read funkcije
-    broj_stanja * Tclk + stick_length * clk
-
-    */
-
 
     bool flag = true;
 
@@ -209,9 +176,9 @@ void cache::read()
             flag = false;
         }
 
-        cout << "READ::Read se zaustavio!" << endl;
-        wait(); // ceka dok ne dobije neki podatak
-        cout << "READ::Read je nastavio sa radom!" << endl;
+        cout << "READ::Stopping read process!" << endl;
+        wait(); // Waiting for data
+        cout << "READ::Continuing read process!" << endl;
 
         vector<type> data_stick;
         unsigned char cache_line;
@@ -222,22 +189,21 @@ void cache::read()
 
             offset += sc_time(2 * CLK_PERIOD, SC_NS);
 
-            // Umanji za jedan iskoristivost podatka
+            // Decrease remaining data usage of cache line
             amount_hash[cache_line]--;
-            cout << "READ::Amount_hash za liniju kesa: " << to_string(cache_line) << " je: " << to_string(amount_hash[cache_line]) << endl;
+            cout << "READ::Amount_hash of cache line: " << to_string(cache_line) << " is: " << to_string(amount_hash[cache_line]) << endl;
 
             offset += sc_time(1 * CLK_PERIOD, SC_NS);
 
-            // Proveri da li moze write da upisuje novu liniju
+            // Check whether new data can be written or not
             if(amount_hash[cache_line] == 0)
                 write_enable.notify();
 
 
-            // Upisi lokaciju prvog elementa niza
+            // Write first element location
             dram_word* stick_data_cache = cache_mem + cache_line * (DATA_DEPTH / 5 + 1);
             int j_len;
 
-            // cout << "READ::PB je procitao sledece podatke:" << endl;
             for(int i = 0; i < DATA_DEPTH / 5 + 1; i++)
             {
                 if(i == DATA_DEPTH / 5)
@@ -283,7 +249,7 @@ void cache::read()
 }
 
 /* ----------------------------------------------------------------------------------- */
-/* Implementacija PB <-> Cache interfejsa */
+/* Implementation of PB <-> Cache interface */
 
 void cache::read_pb_cache(const bool &last, sc_time &offset_pb)
 {
@@ -306,7 +272,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
         {
             switch(address)
             {
-                case START_ADDRESS_ADDRESS: // Ova situacija je samo za debug
+                case START_ADDRESS_ADDRESS: // only for debug
                 {
                     unsigned int* data = reinterpret_cast<unsigned int*>(pl.get_data_ptr());
                     *data = start_address_address;
@@ -374,7 +340,7 @@ void cache::b_transport_proc(pl_t& pl, sc_time& offset)
                     break;
             }
 
-            offset += sc_time(6 * CLK_PERIOD, SC_NS); // Samo adresa se salje, a ne cela tabela
+            offset += sc_time(6 * CLK_PERIOD, SC_NS); // only address is sent
 
             break;
 

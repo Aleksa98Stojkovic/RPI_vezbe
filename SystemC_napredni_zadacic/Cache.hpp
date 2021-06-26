@@ -8,8 +8,6 @@
 #include "interfaces.hpp"
 #include "DRAM_data.hpp"
 
-// Dodati jos jedan header sa zajednickim stvarima
-
 class cache :
     public sc_core::sc_channel,
     public pb_cache_if
@@ -34,32 +32,32 @@ class cache :
 
         void write_cache(dram_word* data, dram_word* cache_line);
 
-        // Deklaracija write i read funkcija za hijararhijski kanal
+        // Declaring functions for hierarchical channel
         void read_pb_cache(const bool &last, sc_core::sc_time &offset_pb);
 
-        // Procesi
+        // Processes
         void read();
         void write();
 
-        // Dogadjaji potrebni za komunikaciju izmedju procesa
+        // Events required for communication between processes
         sc_core::sc_event write_enable;
         sc_core::sc_event start_event;
         sc_core::sc_event start_read;
 
-        // Objekat koji meri vreme
+        // Object used for time measuring
         sc_core::sc_time offset;
 
-        /* Interconnedct <-> Cache interface */
-        unsigned int start_address_address; // Pocetna adresa za tabelu pocetnih adresa
-        unsigned int height; // Sadrzi vrednost broja redoav u slici
-        unsigned int width;
-        bool relu;
+        /* Interconnect <-> Cache interface */
+        unsigned int start_address_address; // address of table which holds starting addresses
+        unsigned int height;                // number of rows in image
+        unsigned int width;                 // number of columns in image
+        bool relu;                          // indicates whether ReLu is used or not
 
-        // Unutrasnji resursi
+        // Internal resources
         dram_word cache_mem[CACHE_SIZE * (DATA_DEPTH / 5 + 1)];
-        unsigned char amount_hash[CACHE_SIZE];
-        unsigned int start_address[DATA_HEIGHT]; // Cuva pocetne adrese blokova podataka
-        std::queue<unsigned char> write_en; // Govori kada i koju liniju kesa moze da upisuje write
+        unsigned char amount_hash[CACHE_SIZE];      // holds remaining number of reads for every cache line
+        unsigned int start_address[DATA_HEIGHT];    // holds starting addresses of data blocks
+        std::queue<unsigned char> write_en;         // indicates when and which cache line is free for write function
         std::vector<unsigned char> line;
         unsigned int write_cache_line;
         type cache_mem_read_line[DATA_DEPTH];
@@ -68,7 +66,7 @@ class cache :
         typedef tlm::tlm_base_protocol_types::tlm_payload_type pl_t;
         void b_transport_proc(pl_t&, sc_core::sc_time&);
 
-        // DRAM memorija
+        // DRAM memory
         DRAM_data* dram;
 };
 

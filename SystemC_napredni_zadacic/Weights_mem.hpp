@@ -15,6 +15,8 @@ class WMEM :
 
         WMEM(sc_core::sc_module_name);
 
+        sc_core::sc_out<bool> wmem_loaded;
+
         /* Processor <-> WMEM interface */
         tlm_utils::simple_target_socket<WMEM> PROCESS_soc;
 
@@ -22,7 +24,7 @@ class WMEM :
 
         void read_pb_WMEM(std::vector<type> &weights, const unsigned int &kn);
 
-        type W[W_kn][W_kw][W_kh][W_kd]; // 2 paketa od 9 stapica sa po 2 podatka
+        type W[W_kn][W_kw][W_kh][W_kd];
         unsigned int start_address_wmem;
         bool mem2write;
 
@@ -30,7 +32,6 @@ class WMEM :
         typedef tlm::tlm_base_protocol_types::tlm_payload_type pl_t;
         void b_transport_proc(pl_t&, sc_core::sc_time&);
 
-        /* jedan signal za prekid */
 };
 
 

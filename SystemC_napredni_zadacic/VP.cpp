@@ -25,8 +25,13 @@ VP::VP(sc_module_name name) :
     bus.CACHE_soc.bind(cache_mem.PROCESS_soc);
     Interconnect_soc.bind(bus.CPU_soc);
 
+    pb.conv_finished.bind(pb_interrupt);
+    memory.wmem_loaded.bind(wmem_interrupt);
+
+    pb_interrupt.write(false);
+    wmem_interrupt.write(true);
     signal_channel.write(true);
-    cout << "VP::Kreirana je virtualna platforma!" << endl;
+    cout << "VP::Virtual Platform constructed!" << endl;
 }
 
 void VP::b_transport_cpu(pl_t &pl, sc_core::sc_time &offset)

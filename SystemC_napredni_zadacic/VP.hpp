@@ -23,6 +23,8 @@ class VP : public sc_core::sc_module
 
         tlm_utils::simple_initiator_socket<VP> Interconnect_soc;
         sc_core::sc_signal<bool> signal_channel;
+        sc_core::sc_signal<bool> pb_interrupt;
+        sc_core::sc_signal<bool> wmem_interrupt;
         PB pb;
         cache cache_mem;
         WMEM memory;

@@ -11,10 +11,10 @@ PB::PB(sc_module_name name) : sc_channel(name), offset(0, SC_NS)
     dont_initialize();
     relu = true;
 
-    for(int i = 0; i < W_kn; i++)     // inicijalizacija biasa za potrebe modelovanja
+    for(int i = 0; i < W_kn; i++)     // initializing bias (for modeling purposes)
         bias[i] = 1;
 
-    cout << "Konstruisan je PB" << endl;
+    cout << "PB::PB constructed!" << endl;
 }
 
 void PB::write_cache_pb(std::vector<type> stick_data, sc_time &offset_cache)
@@ -26,9 +26,10 @@ void PB::write_cache_pb(std::vector<type> stick_data, sc_time &offset_cache)
 void PB::conv2D()
 {
 
-    type sum;   // promenljiva za akumulaciju rezultata jednog izlaznog piksela (64)
+    type sum;               // variable used for accumulating result for one output pixel (64)
     vector<type> weights;
     bool last = false;
+    conv_finished.write(false);
 
 
     for(int x = 0; x < DATA_HEIGHT - 2; x++)
@@ -42,20 +43,20 @@ void PB::conv2D()
             else
                 last = false;
 
-            pb_cache_port->read_pb_cache(last, offset);                             // zahtevamo podatke o ulazu iz kesa
+            pb_cache_port->read_pb_cache(last, offset);           // requesting data about input from cache
             offset += sc_time(1 * CLK_PERIOD, SC_NS);
 
-            wait(done_pb_cache.default_event());                                    // desava se na svaku ivicu signala done
+            wait(done_pb_cache.default_event());                  // triggers at every edge of done signal
 
 
             for(int kn = 0; kn < W_kn; kn++)
             {
                 sum = 0;
 
-                pb_WMEM_port->read_pb_WMEM(weights, kn);                                // trazimo odgovarajuce tezine
+                pb_WMEM_port->read_pb_WMEM(weights, kn);          // requesting pertinent weights
 
 
-                for(int i = 0; i < (int)weights.size(); i++)                            // sam proracun
+                for(int i = 0; i < (int)weights.size(); i++)      // computation
                     sum += data[i] * weights[i];
 
                 cout << endl;
@@ -80,12 +81,12 @@ void PB::conv2D()
         }
     }
 
-    /* ovde setovati interrupt */
-    /* U konstruktoru PB-a treba staviti taj interrupt signal na fasle */
-    /* U hpp fajlu treba definisati jedan bool signal koji ce predstavljati interrupt */
-    /* Ovo je interrupt samo za gotovu obradu */
+    conv_finished.write(true);
+
 
     cout << endl << endl << endl << endl;
+    cout << "PB::Finished convolution!" << endl << endl;
+
     cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << endl << endl;
 
     for(int c = 0; c < W_kn; c++)

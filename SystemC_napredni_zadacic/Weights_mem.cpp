@@ -12,9 +12,7 @@ WMEM::WMEM(sc_module_name name) : sc_channel(name)
 
     PROCESS_soc.register_b_transport(this, &WMEM::b_transport_proc);
 
-    /* setujes signal za prekid */
-
-    cout << "WMEM::Konstruisan je WMEM!" << endl;
+    cout << "WMEM::WMEM constructed!" << endl;
 
     int cnt = 0;
     for(int kn = 0; kn < W_kn; kn++)
@@ -48,7 +46,7 @@ void WMEM::read_pb_WMEM(std::vector<type> &weights, const unsigned int &kn)
         }
     }
 
-    cout << "WMEM::Zavrseno citanje tezina!" << endl;
+    cout << "WMEM::Finished reading weights!" << endl;
 
 }
 

@@ -15,8 +15,8 @@ class DRAM_data :
 
     protected:
 
-        dram_word dram[(DATA_DEPTH / 5 + 1) * DATA_WIDTH * DATA_HEIGHT + DATA_HEIGHT];        // DRAM memorija
-        void read_cache_DRAM(dram_word* data, const unsigned int &address, sc_core::sc_time &offset);    // funkcija za citanje iz dram memorije
+        dram_word dram[(DATA_DEPTH / 5 + 1) * DATA_WIDTH * DATA_HEIGHT + DATA_HEIGHT];                   // DRAM memory
+        void read_cache_DRAM(dram_word* data, const unsigned int &address, sc_core::sc_time &offset);    // function for reading DRAM
 };
 
 
