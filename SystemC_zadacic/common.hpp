@@ -10,7 +10,7 @@
 #define DATA_WIDTH 12
 #define DATA_DEPTH 4
 #define Y_LIMIT 11
-#define W_kn 1
+#define W_kn 2
 #define W_kh 3
 #define W_kw 3
 #define W_kd 4
