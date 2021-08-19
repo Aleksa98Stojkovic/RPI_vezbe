@@ -1,0 +1,85 @@
+66. Menadžment zahteva i pisana specifikacija
+	- ona tri
+	- potiče iz problema i razumevanje potreba
+	- model zahteva
+	- menadžment zahteva, vidljivost i praćenje, praćenje kroz dizajn, baza podataka
+	- 1000 individualni zahtevi
+	- opis zahteva(formalni, izvrsni model, prirodni jezik)
+	- teziti formalnom i izvrsnom modelu
+	- ogranicenja koja unosi izvrsni model
+
+67. ESL domeni - data flow i control flow
+	- interesuje nas data path modema, elementi video obrade signala ili generalno obrade signala
+	- nema nista bez control flow, ali se zanemaruje, interesantne su transformacije od ulaza do izlaza
+	- staticki parametri, SNR
+	- performanse algo se procenjuju u MATLABU, C, C++, beskonacni baferi
+	- stanja sistema i transformacije
+	- DF + CF = funkcionalnost sistema na visokom nivou, razliciti nivoi apstrakcije CF(sa i bez detalja imeplementacije arhitekture, abstrakcije vremena, osnovna stanja i modovi)
+	
+68. ESL domeni - protokol stek
+	- podsistemi ili komunikacioni sistem koji sluze za prenos podataka kroz komunikacione kanale prateci neki skup pravila
+	- hijarahijski slojevi, koristis gornji da bi podrzao gornji
+	- stratum korisnicki(tok podataka kroz kanal) i kontrolni/upravljacki(kontrolne poruke)
+	- embeded softver + hardver
+	- fizicki sloj
+	- real time zahtevi, modularna arhitektura zbog standarda, message-passing implementacije, limitirana potreba za paralelizmom
+	
+70. ESL domeni - embeded sistemi
+	- Sta su mebeded sistemi
+	- Real time zahtevi
+	- Inerfejs sa okruzenjem, primer za auto
+	- Nefunkcionalni zahtevi(potrosnja, real time zahtevi, resursi, dostupan softver i hardver, ...)
+
+71. Specifikacija koja moze da se izvrsava, objasniti i nabrojati jezike za ovu specifikaciju
+	- Idealni svet
+	- Ona tri
+		1. Automatizacija pracenja zahteva kroz proces dizajna i podsistema
+		2. Poboljsanje razumevanja integracije heterogenih sistema
+		3. Procesi verifikacije i implementacije se mogu poboljsati
+	- Sta je izvrsna specifikacija, bihevialni opis komponenti koji ispoljava funkcije i vremenske karak ciljnog dizajna kada je to pokrenuto kao simulacija
+	- Aristotel: verifikacija, u skladu sa sistemski zahtevima i ono za implementaciju
+	- implementacijski artifakti
+	- Bog inzenjer
+	- Od pocetka do kraja, evolucija izvrsne spek
+	- UML, XML, MATLAB i SystemC
+	
+72. Staticka analiza pre particionisanja
+	- Kad nemamo izvsnu specifikaciju
+	- Monotonost pre preciznosti i objasniti sa primerom
+	- Vrste statickih analiza
+		1. Function point analysis
+		2. Analiza hardverskih ili hardverski dominantnih sistemski specifikacija
+		3. ility analize
+		4. Rosseta i SysML
+	- Za Function point analysis
+		- potice iz razvoja softvera
+		- dekomponovani funkcionalni model, model podataka i bihevialni model tranzicija stanja
+		- objediniti rezultate primenjenih metrika na sva tri modela u tezinskom smislu
+
+73. Analiza pre particionisanja u slucaju koriscenja platformi
+	- Reuse, troskovi, vreme razvoja, time to market
+	- Neke nove funkcionalnosti se moraju implementirati
+	- Vivado + Zynq je platforma
+	- Naklonost prema odlukama koje su donete u vezi sa particionisanjem biranjem same platforme
+	- disciplina, sve analizirati kao da krecemo od nule
+
+74. Dinamicka anliza pre particionisanja
+	- Simulacija
+	- Vremensko bazirane karakteristike, arbitracioni algoritmi i planeri
+	- racun(profajliranje), komunikacija(pracenje protoka podataka u odredjenim tackama), potrosnja(koliko koja instrukcija trosi energije za datu tehnologiju fabrikacije)
+	- host based ececution kad nema odgovarajuci model of computation
+	- monotonost pre preciznosti
+	
+75. Algoritamska analiza pre particionisanja
+	- opterecenje izvrsavanja, proracuna, kolicina podataka koja se transportuje, greske, biti, komunikacija
+	- float -> fix
+	- nije nuzno, ali bolje pre nego kasnije, manje posla posle
+
+76. Koriscenje rezultata analize pre particionisanja
+	- za implementaciju i verifikaciju
+	- zlatna verifikaciona okruzenja, float i fixed
+	- od algo spek do softvera
+    - od algo spek do hardvera
+	- kosimulacija izmedju sistemske simulacije, rtl simulacije i izvrsavanja softvera na nekom ISS
+	- HLS
+	- vise prica nego praksa
