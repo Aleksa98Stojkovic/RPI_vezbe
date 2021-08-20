@@ -83,3 +83,82 @@
 	- kosimulacija izmedju sistemske simulacije, rtl simulacije i izvrsavanja softvera na nekom ISS
 	- HLS
 	- vise prica nego praksa
+
+77. Particionisanje, klasterisanje i apstrakcija, ilustrovati. Objasniti platforme u ovom kontekstu
+	- Sta je particionisanje? Deljenje secifikacije na skup potencijalno konkurentnih procesa. Ona cetiri nacina
+	- Svaka particija se moze opisati na ona cetiri nacina, manje ili vise apstraktan resurs
+	- Nezavisnost i interfejsi i verifikacija
+	- Optimizacije
+	- podeli pa vladaj
+	- apstrakcija i grupisanje
+	- platforma je klaster, sakriva detalje razlicitih vrsta mogucih implementacija
+	- aplikacija i visi nivo apstrakcije
+	- deljenje troskova dizajna i fabrikacije
+	- mapiranje
+	- funkcionalni objekti i komunikacione linije na elemente platforme i komunikacione puteve
+	- funkcije na arhitekturalne elemente, FFT -> DSP
+
+78. Koraci pri particionisnju
+	- Identifikacija funkcionalnih komponenti
+	- Definisanje ciljane arhitekture, ogranicenja
+	- Mapiranje funkcionalnih jedinica na arhitekturalne jedinice, ogranicenja
+	- Detaljno definisanje interfejsa medju particijama, komunikacija unutra, sinteza ili manuelno
+	- sve se moze automatizovati, ali sve je teze kako se ide gore
+
+79. Funkcionalna dekompozicija pri particionisanju
+	- Dva zahteva, funkcionalna reprezentacija sistema, bez implementacionih detalja, odredjeni nivo paralelizma na aplikacionom nivou da bi se iskoristila konkurentnost
+	- Dva mehanizma, jezici za funkcionalnu konkurentnu izvrsnu specifikaciju, alati za automatsko izvlacenje paralelizma iz sekvencijalnog opisa(neuspesno)
+
+80. Opis arhitekture pri particionisanju
+	- Sta je arhitektura? kolekcija komponenti koje implementiraju neko ponasanje
+	- jedan na jedan korespodencija
+	- klase
+	- apstraktni sematik
+	- nije jedan na jedan u slozenim slucajevima
+	- mrezni protokoli, skupovi instrukcija, arbitrazne politike
+	- softverska arhitektura(organizacija taskova, slojevi, RTOS)
+	- slozena specifikacija + ponovno koriscenje = platforma
+
+81. Platforme pri particionisanju
+	- Zasto platforme, time to market je BOG
+	- razlicite implementacije slicnih specifikacija ili su slicni zahtevi
+	- mali broj dobrih resenja
+	- dizajnerska disciplina
+
+82. Dodela pri particionisanju, navesti strategije i objasniti ih
+	- Mapiranje se moze uraditi na dva nacina
+	- sukcesivno prifinjenje - obratiti paznju na komunikaciju i racun
+	- eksplicitno mapiranje - alati koji daju analizirane profinjene modele i daju uputsva za sintezu
+	- A = Funkcionalni model bez vremena = specifikacioni model, model B = dodajemo info o arhitekturi i tajming za funkcije = skup komponenti
+	- C = dodajemo prvi info za komunikaciju i vreme u kmunikaciji, to radimo odabirmo arbitra = model sa arbitrazom na magistrali
+	- D = model proracuna tacan u ciklus, E = bihevijalni model sa funkcionalnom magistralom, F = RTL model
+	
+83. Hardversko particionisanje
+	- Svodi se na konfiguraciju platforme
+	- Softver je kopleksniji, opravdano je cenom alata i resenja bagova, ali ne i njihovim dijagnostikovanjem i razotkrivanjem
+	- verifikacija je sada nuzna
+
+84. Softversko particionisanje
+	- Samo kriticni delovi vezani za vreme i potrosnju idu u hardver
+	- Sve vise funkcija trci na nekim procesorima
+	- embeded procesori
+	- OS i taskovi
+	- OS apstrahuje hardver
+	- losa softverska arhitektura -> lose performanse sistema
+	- dobra softverska arhitektura omogucava hardver dizajnerima da iscrpno istraze mogucnosti platforme
+
+85. Softverko particionisanje na multiprocesorima i zadacima
+	- Vise procesora istih ili razlicitih
+	- Konkurentnost
+	- Sinhronizacija i komunikacija taskova na razlicitim procesorima, namesnki komunikacioni mehanizmi
+	- Podela softvera na jednom procesoru
+	- Planer, promena konteksta i komunikacija
+
+86. Softversko particionisanje u operativnim sistemima
+	- Potreban je OS
+	- Sta je OS
+	- Alokacija memorije, implementacija komunikacije, zastita taskova
+	- Uzeti u obzir OS pri softverskom particionisanju
+	- Direktno mapiranje
+	- Promene u OS vode do novog mapiranja
+	
