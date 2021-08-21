@@ -162,3 +162,103 @@
 	- Direktno mapiranje
 	- Promene u OS vode do novog mapiranja
 	
+87. Odgovornost interfejsa i odrzavanje modela nakon particionisanja. Ilustrovati i ukratko objasniti.
+	- Mogu se otkriti problemi, recimo, pri implementaciji, pa se treba vratiti nazad
+	- Margina
+	- Odgovornost interfejsa ostaje onom ko ga kreira
+	- odrzavanje, azurirati prethodne modele
+
+88. Objasniti sta je hardversko i softversko modelovanje i komodelovanje i nasvesti vrste
+	- modeli HW i SW treba da saradjuju
+	- moraju postojati kompatibilni interfejsi
+	- Jedinstven model, filtriranje i transliranje(emulator), posebni(separata) modeli(prototip)
+
+89. Hardvesko - softversko modelovanje - jedinstven model
+	- nivo detalja ne mora biti velik sve dok su transakcije na interfejsnima dovoljno precizne
+	- brz model na domacinu + lak debag
+	- nije jasno sta je HW i sta he SW, kao i koliko detalja
+	- nadleznost ostaje sistemskom inzenjeru
+	- koristi se u fazi pre particionisanja, ali moze biti od koristi i posle
+	- verifikacija softvera
+
+90. Hardvesko - softversko modelovanje - filtriranje i transliranje
+	- jasno definisan SW model
+	- promenljiva u deljenoj memoriji
+	- lakse se deli odgovornost, specificiranje aktivnosti je u nadleznosti SW inzenejera iako filter komponentu implementira hardverski tim
+	- za SW na niskom nivou ili kad su poznati registri
+	- poznata SW komponenta, ali HW platforma je promenljiva
+
+91. Hardvesko - softversko modelovanje - posebni modeli
+	- moze da se koristi za modelovanje na razlicitim nivoima apstrakcije(RTL model procesora, aproksimativni u ciklus modelu, tacni u ciklus modeli, modeli skupa instrukcija)
+	- kada se koristi za najnizi nivo apstrakcije onda model moze biti spor zbog velikog broja detalja
+	- Jasna podela olaksava dodelu odgovornosti, sistem dizajn tim je zaduzen za interfejse. Ovaj stil verifikuje specifikaciju
+	- Slicno kao i filtriranje, za jedostavnije prelaze sa jednog nivoa apstrakcije na drugi treba korisititi komponente za translaciju transakcija
+
+92. Komponente koje se koriste nakon particionisanja. Ilustrovati an primeru
+	-  Da bi prelazi apstraktni model -> particionisani model bio jednostavan treba pisati modele istim stilom
+	- Mix komponenti model pre i posle particionisanja -> bolje pretrazivanje prostora dizajna i otkrivanje defekata u modelima
+	- Odvajanje funkcije od komunikacije
+	- Profinjavanje interfejsa ili postojanje komponenti za translaciju
+	- Primer
+
+93. Dinamicka i staticka analiza nakon particionisanja. Kratko objasniti i nasvesti vrste analize
+	- Sada je moguce uraditi prve znacajne analize, jer imamo particionisani model, pa mozemo videti da li treba nesto optimizovati
+	- dinamicka, simulacija
+	- staticka, formalne analize
+	- hibridna je mix, staticka analiza podataka dobijenih dinamickim analizama, tj simulacijom, model dobije statickom analizom se dinamicki analizira
+	- Vrste analiza
+		1. Funkcionalna
+		2. Performanse
+		3. Analiza interfejsa
+		4. Snage
+		5. Povrsine
+		6. Cene
+		7. Analiza mogucnosti pronalazenja greski
+
+94. Funkcionalna analiza nakon particionisanja
+	- Vise nivoa korektnosti, imamo model blizak implementaciji
+	- FIFO i keš
+	- Skupljanje info o akumuliranim kasnjenjima i velicini redova cekanja i komponenata koji stvaraju ta uska grla
+	- Moguca optimizacija moze dovesti do ponovnog particionisanja
+
+95. Analiza performansi nakon particionisanja
+	- Imamo particionisan model i neku sliku konkurentnosti i podele resursa
+	- mogu se izvrsiti preciznije analize
+	- koristimo realne podatke, jer funkcionalnost i tajming zavise od podataka
+	- dinamicki generisemo podatke, a vrsimo staticke analize dobijenih povratnih info
+	- usput proveravamo dok traje simulacija
+
+96. Analiza interfejsa nakon particionisanja
+	- na ovom nivou imamo apstraktne interfejse
+	- dve klase, standardne magistrale i nase definisane magistrale
+	- standardne ne predstavljaju problem, jer su dobro testirane
+	- nove treba proveriti da li mogu da ispune zeljeni protok
+	- ispravljanje u RTL-u je kasno
+	- verifikovati nove interfejs komponente do najnizeg nivou apstrakcije
+
+97. Analiza snage nakon particionisanja
+	- Imamo model posle particionisanja, pratimo protok i aktivnost podataka
+	- na grafikonu blezimo aktivnost dvake komponente i to povezujemo sa potrosnjom
+	- ovo nije narocito precizno, ali daje neku siru sliku o potrosnji
+	- gomila simulacija i iskustva
+	- ukljuciti i ivicne slucajeve
+
+98. Analiza povrsine nakon particionisanja
+	- Imamo model po 500. put
+	- Mozemo proceniti kompleksnot svake komponente koristeci standardne metrike
+	- Ovo moze biti neprecizno bez prethodnih podataka
+	- kada koristimo nove metrike, onda je dobro da uzmemo podatke iz analiza sa prethodnih projekata
+	- treba analizirati uspehe i neuspehe projekata nakon sto je on zavrsen da se ne bi krenulo od nule svaki put
+
+99. Analiza cene nakon particionisanja
+	- Koriste se rezultati raznih analiza
+	- Cena zavisi od toga da li se koristi platforma, koja tehnologija, koje komponente, kao i od slozenosti novih komponenti
+	- Procena cene je neprecizna ako nemamo podatke iz predjasnjih projekata
+	- Korstimo metrike za procenu slozenosti softvera
+
+100. Analiza mogucosti pronalazenja greski nakon particionisanja
+	- Ponasanje fabrikovanog cipa moze se osmatrati preko pinova
+	- svi bagovi mogu jedino tako da se uoce
+	- obicno je potrebna posebna dodatna logika koja signalizira odredjene situacije na pinovima koje se desavaju u cipu
+	- cesto se o time pocne baviti tek pri kraju implementacije, sto je kasno
+	- DFT treba poceti ranije u procesu razvoja
