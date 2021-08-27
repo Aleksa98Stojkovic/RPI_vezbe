@@ -1,3 +1,277 @@
+7. Sta je model i znacaj
+	- Model je obrazac, plan, reprezentacija ili opis nekog principa funkcionisanja objekta, sistema ili koncepta
+	- Omogucava da se ispituju stvari koje jos ne postoje i kasnije da profinjujemo model
+	- Najjednostavniji model koji daje tacne odgovore
+	- EDA industrija, tranzistori, ograniciti se na broj modela
+	- Vise detalja = precizniji rezultati, ali sporiji model
+	- Manje detalja = suprotno od vise detalja
+
+8. Vrste modela
+	- Konceptualni model = istice vazne veze izmedju procesa, zivi u domenu problema, Petri mreze, process flow graph, grafovi dogadjaja, UML
+	- Fizicki modeli = kao na arhitekturi, mogu da se naprvae, uoce i manipulisu. Dele neke karakteristike sa realnim sistemom
+	- Matematicki model = set jednacina, numericki i analiticki model. Statisticki model = modeluje varijanse i mogu se meriti varijanse i srednje vrednosti
+	- Vizualni modeli = vizualizuju rad sistema, imaju vizualne elemente u svom izlazu
+	- Logicki modeli = imaju neke aspekte strukture ili forme, arhitekturalni modeli, TLM i svi modeli sa nekim aspektom vremena
+
+9. Modeli izracunavanja
+	- Model izracunljivosti obuhvata fundamentalne aspekte mogucnosti sistema da resava probleme
+	- Asprahuje mnoge detalje(vreme) kako bismo imali brzi i precizniji model
+	- Ne mozemo imati jedan jedinstven model izracunavanja u ESL toku razvoja sistema
+	- SW model = Fon Nojmanova arhitektura, HW = model baziran na diskretni dogadjajima
+	- Jezik omogucava mapiranje mogucnosti modela izracunavanja na nesto sto se moze opisati i sa cim se moze komunicirati
+	- jezik je sintaksa, a model izracunljivosti semantika
+	- Ono za C i pre toga, sta god to znacilo
+	- SW i HW ne mogu imati isti model izracunljivosti
+	
+10. Uproscavanje, navesti vrste i ukratko objasniti
+	- Eliminacija, apstrakcija i struktura(modeli nam omogucavaju da pojednostavimo problem)
+	- u SW najnizi nivo apstrakcije je instrukcija. Apstraktniji nivo je C jezik
+	- U HW apstrakcije se vezuju za podatke i vreme
+	- Hijararhija je potrebna da bi alati za sintezu preziveli. Hijararhija nam omogucava da grupisemo vise komponenti koje cine neku logicku celini, sto se moze i duplicirati.
+	- Hijararhija pojednostavljuje dizaj, jer ga deli na manje probleme
+
+11. Modeli i jezici
+	- Jezici za modelovanje su vestacki jezici koji izrazavaju neke koncepte, tako da ti nezavisni alati mogu da interpretiraju taj opis za potrebe, npr simulacije ili sinteze
+	- Jezici su bazirani na tri skupa koncepta: semantika, apstraktna i konkretna sintaksa
+	- Semantiku cine pravila koja trebaju da se postuju u tom jeziku
+	- Apstraktna sintaksa opisuje kako su komponente povezane strukturalno, ali ne govori nista o semantici tih veza
+	- Imperativni jezici = vrse naredbe odredjenim redosledom
+	- Deklarativni jezici = govore sta treba da se uradi, ali ne i kako(PSL i SVA)
+	- Funkcionalni jezici = definisu funkciju sistema, imperativni i deklarativni jezici spadaju u ovu grupu
+	- Dinamicki jezici i modeli se dele na arhitekuralni(SystemC) i algoritamski(MATLAB(matematicki jezici), Simulink(Data flow jezik)) pristup modelovanju
+	- Nefunkcionalni jezici = zadaju ogranicenja koja sistem treba da ispuni(SDC za ogranicenja u Vivadu)
+	- Meta modeli = IP-XACT jezik koji govori koji su interfejsi i kako su komponente te povezane, ali ne daje druge detalje
+	
+12. Takosnomija ESL-a, objasniti sta je, navesti sve ose
+	- Taksonomija predstavlja karakterizaciju objekata ili koncepata baziranih na njihovim odnosima sa ciljem klasifikovanja
+	- Primer je periodni sistem elementata gde su elementi klasifikovani na osnovu odredjenih osobina 
+	- Taksonomija se moze izraziti pomocu hijararhijskog grafa ili tabele atributa, gde atributi identifikuju odredjeni element razlicitosti
+	- Vremenska osa, osa podataka, osa konkurentnosti, osa kumunikacije, osa konfigurabilnosti
+	
+13. Vremnska osa ESL taksonomije
+	- Parcijalno rasporedjeni dogadjaji = ne znamo tacno kada pocinje i zavrsava, ali znamo u odnosu na druge dogadjaje
+	- Sistemski dogadjaji = dogadjaji na nivou sistema(interrupt)
+	- Token ciklusi = za dataflow modele, podaci dostizu u pravilo rasporedjenim trenucima
+	- Intrukcioni ciklusi = ne uzimaju se u obzir stanja cekanja i uticaj hardvera na izvrsavanje softvera. Pristupi memoriji su cisto virtualni
+	- Aproksimativni u ciklus = postoji pojam vremena za transakcije na magistralama i za pristupe memoriji, ali nije precizan previse
+	- Tacno u ciklus = znamo sve svaki ciklus
+	- Precizno na nivou kasnjenja logickih kapija = znamo vremena i unutar jedne periode
+
+14. Osa podataka ESL taksonomije
+	- Token = podatak se krece kroz sistem, ali nema nikakvih detalja o njemu
+	- Property = podatak je imenovan, ali nije odredjeno kako se reprezentuje
+	- Value = definisan je tip podataka i nivo preciznosti koji ce se korisiti u hardveru
+	- Format = tacan format podatak koji ce se koristiti u procesoru(fp ili fxp, endian)
+	- Bit logical = poznato je mapiranje vrednosti na hardverski elemenat koji ga skladisti
+	
+15. Osa konkurentnosti ESL metodologije
+	- Hocemo da vidimo koje obrade mogu da se vrse simultano
+	- Ne mora sav paralelizam da se iskoristi, jer veca konkurentnsot znaci i slozeniji sistem i komplikovanija verifikacija
+	- Sekvencijalno = nema paralelizma u implementaciji, C kod
+	- Multiaplikacijska = vise aplikacija se izvrsava u paraleli, a razmenjuju podatke preko fajl sistema
+	- Paralelno = jedna aplikacija je razbijena na vise zadataka, pri cemu ti procesi komuniciraju pomocu nekih poruka(ne moze deljena memorija)
+	- Multinitno = isto kao paralelno, ali se koristi deljenja memorija
+	- Protocna obrada = imamo faze u obradi koje mogu istovremeno da se izvrsavaju
+	- Na nivou signala = vise kombinacionih puteva se izvrsava u paraleli
+
+16. Osa komunikacije ESL metodologije
+	- Komunikacija je potrebna kada imamo vise elemenata za obradu
+	- Od tacke do tacke = najcesce u HW, ima direktana veza sto daje neprekidan protok podataka
+	- Baferovana = osnovni vid upravljane komunikacije, povezuju se procesi koji mogu imati razlicite brzine obrade podataka
+	- Koprocesor = proizvodjac - potrosac, procesor je vlasnik info, a koprocesor izvrsava neku specificnu funkciju
+	- Memorija = moramo da imamo vise portova, po jedan za svaki proces u komunikaciji, procesi moraju da imaju svoj interfejs, a ne da pristupaju preko neke magistrale
+	- Magistrale(brze) = NoC i sve magistrale koje su vezane za procesor, koristi se vise magitrala, pa je potrebno da imamo mostove izmedju njih
+	- Magistrale(sporije) = na vecu razdaljinu i postoji slozeniji protokol, pa shodno tome i vece kasnjenje(USB i PCI)
+	- Nema komunikacije = kada su procesi nezavisni u potpunosti
+
+17. Odnos osa konkurentnosti i komunikacije ESL taksonomije
+
+				       *
+				     *
+	.		     * * *
+	.	     * * * *
+	.	     * * * *
+signal	   * 
+		point2point ...
+		
+18. Osa konkurentnosti ESL metodologije	
+	- Fiksno = nemamo pristup unutrasnjosti dizajna i ne mogu se izvrsiti nikakve promene, ovo se moze uraditi na svim nivoima apstrakcije(npr dat nam je kompajliran objektni kod)
+	- Dizajn = kada imamo pristup izvornim kodovima, onda je dizaj konfigurabilan. To je normalno u procesu dizajna HW i SW komponenti
+	- Konfigurabilni = primer za IP, ne moze se dodati nista novo bez redizajna
+	- Programabilnost = za FPGA, uredjaje konfigurisemo prilikom pokretanja, ali zbog male brzine tokom porgramiranja, ovo se ne smatra dinamicki rekonfigurabilnim uredjajima
+	- Dinamicki rekonfigurablno = neke FPGA ploce, moze se vrsiti reprogramiranje tokom izvrsavanja operacija
+	- Ova osa je ortogonalna osama konkrentnosti i komunikacije
+	
+19. Navesti sve ose ESL taksonomije i tacke na njima
+	- Ide od najvece rezolucije
+	- Vremenska osa: kasnjenje na nivou kapija
+	- Osa podataka = bit logical
+	- Osa konkurentnosti = signal
+	- Osa komunikacije = od tacke do tacke
+	- Osa konfigurabilnosti = fiksirano
+
+20. Ilustrovati ESL taksonomiju na primeru funkcionalnog modela
+	- Funkcionalni model opisuje ponasanje sistema, a da ga ne implementira
+	- Nema nikakav aspekt vremena, ali ima sve ESL atribute
+	- Ima sve tacke na svim osama, ali nema nista iz tajminga
+
+21. Ilustrovati ESL taksonomiju na primeru HDL opisa
+	- Vremenska osa = Nema parcijalno rasporedjene i sistemske dogadjaje
+	- Osa podataka = Nema token
+	- Konkuretnost = Ima signale i protocnu obradu
+	- Komunikacija = Ima od tacke do tacke i baferovanu komunikaciju
+	- Konfigurabilonst = Ima sve
+	
+22. Ilustrovati ESL taksonomiju na primeru FPGA resenja
+	- Vremenska osa = Nema parcijalno rasporedjene i sistemske dogadjaje
+	- Osa podataka = Nema token
+	- Konkuretnost = Ima signal i protocnu obradu
+	- Komunikacija = Ima baferovanu komunikaciju i koprocesor
+	- Konfigurabilonst = Nema fiksno i dizajn	
+
+23. Ilustrovati ESL taksonomiju na primeru uopstenog C resenja
+	- Vremenska osa = Nema kasnjenje na nivou kapija, aproksimativno i tacno u ciklus
+	- Osa podataka = Nema bit logical i format
+	- Konkuretnost = Ima sekvencijalno, nema konkurentnost(ali osa je precrtana)
+	- Komunikacija = Nema nista
+	- Konfigurabilonst = Ima dizajn i fiksno
+
+24. Ilustrovati ESL taksonomiju na primeru SystemC resenja
+	- Vremenska osa = Nema kasnjenje na nivou kapija
+	- Osa podataka = Ima sve
+	- Konkuretnost = Nema sekvencijalno i multiaplikacijsko
+	- Komunikacija = Ima od tacke do tacke, baferovanu i memorijsku komunikaciju
+	- Konfigurabilonst = Ima fiksno i dizajn
+	
+25. Hardverska konfiguracija i kontrola softvera - softverska perspektiva, API
+	- Softver moze da radi sa HW: resetovanje, konfigurisanje, citanje i upisivanje podataka u memorijske elemente i dobijanje statusa HW
+	- Sta je SAHE, SAHE se implementira pomocu memorija, registra i bit polja
+	- SW vidi HW kao deo adresnog prostora
+	- Optimizovati transakcije
+	- LAU
+	- Pakovanje SAHE-a ili SAHE u zaseban registar
+	- Za citanje moze da SW cuva kopiju registra ili da vrsi RMW operacije(mogucnost za nedeterministicke greske)
+	- Kad je SAHE prevelk, onda mora na vise registara
+	- API upravlja efikasno sa SAHE-evima na najnizem nivou
+	- API na visem nivou se dobija od API-ja na nizem
+	- Postoji mogucnost da se napravi API nezavisan od HW
+
+26. Hardverska konfiguracija i kontrola softvera - hardverska perspektiva, prekidi
+	- Hardver vidi sistem kao mrezu komponenti
+	- Transakcije se mapiraju na promene vrednosti napona na pojedinim zicama u skladu sa specifikacijom
+	- Prekidi su za SW asinhroni dogadjaji
+	- HW obavestava SW o dogadjajima pomocu prekida
+	- ISR
+	- Prioriteti
+	- Kasnjenje prekida
+
+27. Protokoli na magistralama i translacija protokola
+	- Protokol = promene vrednosti na zicama na osnovu skupa pravila
+	- Specifikacija definise pravila protokola(adresiranje, podatke, vreme, klokovanje, rukovanje)
+	- AXI, AMBA, USB, UART, I2C, ...
+	- Master i Slave
+	- Burst, indikacija za kraj write burst, klokovanje, interleaved and out of order transakcije, provera gresaka, 
+	  pristupi pojedinacnim bajtovima, arbitraza kada imamo vise mastera, kontrola za rukovanje i ubacivanje stanja za cekanje
+	- Potrebno vise protokola, a tada i translacija medju njima
+	- Dodatne transformacije : resinhronizacija kada se prelazi u drugi takt domen, promena naponskog nivoa, protocna obrada
+	- Zelimo manji broj protkola koji postoje izmedju izvora i destinacije, jer to smanjuje kasnjenje
+	
+28. Registri i bitska polja
+	- Registri su memorijski mapirani, najcesce su najmanje jedinice HW/SW interfejsa
+	- Odnos registara i SAHE-a i LAU-a
+	- Registri mogu biti read-only ili read-write
+	- Bitska polja i njihov odnos sa SAHE
+	- Osobine bitskih polja : sirina, ofset, tip(citanje, pisanje), reset vrednost
+	- Opis transakcije i burst
+	- Sporedni efekti prilikom pisanja i citanja registra(R2C, W1toC, W0toC, ...)
+	- Uslozavanje verifikacije
+	- Bezbroj mogucnosti za implementaciju tih registara -> novi ivicni slucajevi
+	 (citanje i pisanje se radi na razlicitim adresama, citanje registra je kao FIFO(stalno dobijamo drugu vrednost), jedan registar se moze mapirati na vise adresa)
+	
+29. Tok projektovanja za HW/SW interjes - uopsteno, dokumentacija, IP-XACT, SystemRDL
+	- Sve pocinje od pisane specifikacije HW/SW interfejsa
+	- Vodopad metodologija = pisana dokumentacija -> RTL dizajner pravi RTL testove -> Sistem dizajner pravi sistemske testove -> Softver tim pise firmware biblioteke i testove
+	- Opisati nasu tabelu za registre, jer tako se profesionalno pise dokumentacija za taj interfejs
+	- IP-XACt je standard u XML koji se moze koristiti za opisivanje memorijsko mapiranih registara
+	- SystemRDL je jezik koji sluzi za opisivanje registara
+
+30. HW/SW interfejs u kontekstu IP dizajna, IP verifikacije kao i verifikacije na nivou cipa
+	- IP treba da implementira logiku za dekodovanje i modeluje registre
+	- Verifikacija interfejsa na nivou IP-ja ispituje, simulacijom(UVM), pisanja i citanja registara
+	- Treba proveriti: reset vrednosti, pristup svim validnim bitima, da li ima nezeljenih sporednih efekata kada se pristupa nevalidnim adresama,
+	  da li se sporedni efekti ponasaju kako su specificirani
+	- I na nivou cipa treba obratiti paznju na detalje HW/SW interfejsa
+	- Problemi: Implementacija i specifikacija se ne podudaraju, mirorovanje registara usled preuske adresne magistrale, 
+	  greske prilikom dekodovanja i preklapanje adresnih prostora usled loseg memorijskog mapiranja 
+	- Testovi se rade u HVL-u(read i write) ili se kompajlira C program, pa se binarni fajl ucita u model embeded procesora
+	- Registri moraju biti modelovani iz perspektive procesora da bismo imali veliku pokrivenost
+	- Simulacija RTL modela je dugotrajna, treba razmotriti i formalnu verifikaciju
+
+31. Razvoj i verifikacija firmvera
+	- Firmver = najnizi sloj softvera koji komunicira sa registrima, API
+	- efikasno citanje i pisanje u registre
+	- beskonacno mnogo nacina da se implementira
+	- Sa i bez makroa
+	- C++ funkcije sa makroima predstavlja dobar nacin za pisanje firmvera
+	- Verifikacija se vrsi pomocu HW modela(od RTL do virualne platforme, zavisi koji su kriterijumi za SW)
+
+32. Tradicionalni tok razvoja i alati za HW/SW interfejs
+	- Tradicionalno to je bilo preko pisanog dokumenta(kao sto smo ranije videli i radili na projektu)
+	- Svaki tim interpretira - translira - daje povratnu informaciju vezano za sepcifikaciju interfejsa(ITF)
+	- Ovo uvodi mogucnost za greske u interpretaciji, sinhronizaciji i translaciji
+	- Imaju moderni alati koji su automatizovani
+
+33. Alati za upravljanje registrima
+	- Automatizuju proces generisanja svih potrebnih info za HW/SW interfejs
+	- Interfejs je opisan u nekom jeziku i to predstavlja izvrsnu specifikaciju
+	- Alati od tog opisa generisu dokumentaciju, RTL model i testove, sistemski virtualni model i tetsove, firmver biblioteke i testove
+	- imamo centralizovani model koji je osnova za sve oblasti razvoja, pa nema gresaka, jer nema tumacenja
+	- mozemo dobiti i IP-XACT opis interfejsa i regresije
+	- Imaju komercijalni alati, a nekada timovi sami razvijaju alate
+
+34. Motivacija za ESL metodologiju
+	- Tradicionalni nacini projektovanje podrazumeva vodopad metodu(Platforma -> HW -> SW -> prototip, nema nazad nakon jednog koraka)
+	- Sistemi se usloznjavaju, ne moze sve u SW zbog potrosnje i performansi, ne moze samo da se poveca frekvencija CPU-a, jer to skodi potrosnji
+	- Namenski hardver trazi dosta vremena, veci nivo paralelizma oduzava razvoj(slozenija verifikacija)
+	- Imamo multiprocesorske sisteme koji zahtevaju dosta vremen i zaseban softver
+	- RTOS je vezan za HW
+	- Statistike
+	- Sta je prednost ESL-a(mozemo se vracati an prethodne korake, razvoj SW i HW se moze paralelizovati, takodje i verif ide usput za svaki nivo apstrakcije)
+
+35. Potencijalne vrednosti sistema za VSP-a
+	1) Lakse pretrazivanje prostora dizajna i donosenje arhitekturalnih odluka(brze nego u RTL-u)
+	2) Relativno precizna procena performansi(do 15% greske)
+	3) Analitcko HW/SW particionisanje, na osnovu metrika cije vrednosti dobijamo simulacijom, mozemo brzo izvrsiti novo particionisanje dok ne dobijemo zadovoljavajuce performanse
+	4) Razvoj SW moze da pocne mnogo ranije, jer imamo programski pogled na HW unutar VSP, uz pomoc nekih alata to se lako radi
+	5) Veci nivo determinizma na sistemskom nivou = mozemo da reprodukujemo bilo koje ponasanje
+	6) Brze izvrsavanje hardverskog modela i njegove verifikacije, umesto na RTL nivou
+	7) Brze izvrsavanje i koverifikacija SW i HW zajedno
+	8) Besplatni test benc na sistemskom nivou - kosimulacija - Cadence
+	9) Mogu se postici vece performanse i usteda na energiji(potrosnji)
+	10) Kada dobijemo RTL mozemo da zameni virtualni model sa njim i da opet uradimo kosimulaciju, koristimo VSP da verifikujemo RTL
+	
+36. VSP - navesti tri pogleda i objasniti ukratko
+	- Programerski pogled: VSP je mreza komponenti koje komuniciraju na nivou transakcija. Programski pogled omogucava dizajnerima softvera da imaju
+	  uvid u potrebne komponente za razvoj softvera(registre), ali takodje, imaju i pregled celog sistema, mogu da zaustave izvrsavanje u proizvoljnom trenutku i
+	  da ispitaju razlicite aspekte sistema(lakse se manipulise sa sistemom, recimo mozemo da ispitamo situacije sa kesom, kad je pun, kad je prazan itd)
+	- Programeski pogled + vreme = U komponente unutar VSP dodajemo neku aproksimaciju vremena. Mozemo da izvrsimo analize performansi i potrosnje preciznije.
+	  Rana validacija aplikacije i softvera koji zavisi od hardvera. Mesana simulacija kad budemo imali RTL blokove
+	- Tacno u ciklus: imamo model kod kog je poznato tacno stanje svaki ciklus. Ovo je spor model i koristi se na kraju za finalnu verifikaciju komponenti
+
+37. Prepreke u usvajanju bihevijalnog modelovanja, navesti razloge i ukratko objasniti svaki od njih
+	- Potraznja = sistemi su bili jedno-procesorski i relativno jednostavni, pa su se timo drzali poznate RTL integracine platforme, gde se na osnovu nekog iskustva
+	  odredjuju potrebni IP blokovi dok imamo, recimo postojeci procesor. Koristeci ovu metodologiju ne postoji velika mogucnost za optimizaciju. Problem je nastao kada su
+	  poceli da se pojavljuju masovno viseprosorski sistemi, te metodologija vise nije bila primenljiva
+	- Standardi = nisu postojlai standardizovani jezici za opis na sistemskom nivou. To je sprecavalo kompanije da kupuju sistemske opise IP blokova od
+      drugih kompanija, jer nisu se uklapali sa njihovim opisima, jer nije postojao neki standard. Takodje, za postojece RTL opise IP blokova nisu postojali
+	  sistemski opisi, pa su se neki odlucili da manuelno pisu sistemski opis na osnovu RTL modela, ali to je trosilo puno vremena, pa veliki broj kompanija nije
+	  hteo da ulozi to vreme sve dok se nisu pojavili alati koji su taj proces automatizovali(neki od standarda su SystemC jezik, IP-XACT)
+	- Automatska sinteza RTL opisa na osnovu bihevijalnog opisa = pojavljuju se sada alati koji relativno uspesno to rade, pa postaje primamljivije da se koristi 
+	  ova metodologija, jer je razvoj na visem nivou apstrakcije, a samim tim i brze
+	  
+38. Automatska implementacija programabilnog hardvera
+	
+
 66. Menadžment zahteva i pisana specifikacija
 	- ona tri
 	- potiče iz problema i razumevanje potreba
@@ -262,3 +536,68 @@
 	- obicno je potrebna posebna dodatna logika koja signalizira odredjene situacije na pinovima koje se desavaju u cipu
 	- cesto se o time pocne baviti tek pri kraju implementacije, sto je kasno
 	- DFT treba poceti ranije u procesu razvoja
+	
+101. Gledista na verifikaciju
+	- gledista = tipovi verifikacije koje se mogu izvrsiti(funkcionalnost, performanse, tajming, implmentacija, arhitektura)
+	- Ceka se RTL nivo, nije efikasno
+	- Verifikacija funkcionalnosti, verifikacija performansi, bihevijalna verifikacija, verifikacija implementacije i sistema, ali moramo imati te modle
+	- ESL zeli da verif pocne sto pre
+	- Imamo cosim, ali nemamo modele da ih pokrenemo
+	- Opet nesto za RTL
+	- Treba poceti ranije verif
+	- Verif pocinje sa verif planiranjem, a zavrsava se sa analizom pokrivenosti i neuspeha
+
+102. Verifikacioni plan
+	- Verifikaciono planiranje = startegije i taktike -> verif plan
+	- verif plan, dva pitanja
+	- Uvod, funkcionalni i dizajn zahtevi(interfejsi i kljucne karakteristike), verif pogledi, dizajn verif okruzenja
+	- Uvod = opste strategije i uvod o DUV-u
+	- funckionalni zahtevi = crna kutija, dizajn zahtevi = prozirna kutija
+	- verif pogledi = grupisanje vremenski i funkcionalno baziranih referenci(C++) na druge delove plana sa svojim ciljevima
+	- dizajn verif okruzenja = ceker, pokrivenst, stimulus, monitor, funkcionalna specifikacija za okruzenje
+
+103. Analiza specifikacije u verifikaciji nakon particionisanja
+	- pronalazenja karakteristika i ivicnih slucajeva(kada jedan ili vise podataka ili sekvenca dogadjaja ili kombinacija dovodi do znacajne promene u ponasanju DUV-a)
+	- Bottom - up(puno detalja, malo nedorecenosti), top - down(obruto)
+	- Bottom - up = za male specifikacije, detaljno proucavanje, beleze se karakteristike(zahtevi ponasanja) i njihovi atributi koji pomazu da se bolje definsu karakteristike
+	- karakteristike se zapisuju u odgovarajucem delu plana i njihov opis predstavlja fukcionalnu specifikaciju za model pokrivenosti
+	- Top - down = onaj tim se oformaljava
+
+104. Dizajn modela pokrivenosti na visokom nivou
+	- Model pokrivenosti je aproksimacija opisa ponasanja dela dizajna SW i HW. Cilj je kvantifikacija regija ponasanja DUV-a kako bismo otkrili sta je ispitano
+	- velicina i tacnost modela
+	- opis semantike, par recenica, fukcionalna specifikacija
+	- atributi, vrednosti(fizicki prostor i validni prostor), vremene odabiranja i korelaciono vreme
+	- odnosi medju atrubutima, matrica, hijerarhija i hibridni model
+
+105. Detaljan dizajn modela pokrivenosti
+	- mapiranje dizajna top level modela na verif okruzenje
+	- sta(registar, signal ili promenljiva), gde(arhitekturalni element okruzenja koji ce biti zaduzen za odabiranje), kada(vremena korelacije i odabiranja)
+
+106. Hibridne metrike modela pokrivenosti
+	- metrike poticu iz vise izvora
+	- implicine, eksplicitne
+	- podaci, vreme
+	- implementacija, specifikacija
+	- iz simulacije ili formalne analize
+
+107. Resenje verifikacionog problema
+	- kombinacija formalnih i dinamickih metoda
+	- staticke metode dokazuju teoreme i mogu da pokazu potpuno odsustvo bagova
+	- dinamicke se baziraju na simulaciji gde se generise stimulus
+	- zbog kompleksnosti modela posle particionisanja na nivou transakcija se koriste uglavnom dinamicke metode
+	- verif IP-jevi
+
+108. Stimulus generatori u verifikaciji nakon particionisanja
+	- koristi se randomizovano ograniceno generisanje stimulusa
+	- ogranicenja dobijamo od funkcionalnih zahteva, posebno belezimo i ogranicenja koja dovode do generisanja stimulusa koji inicira ivicne slucajeva
+	- hocemo automatizovano verif okruzenje
+	- isplati se, jer se poveca produktivnost
+	- automatizuje se i povratna sprega izmedju merenja pokrivenosti i generisanja stimulusa
+	- Bring - up testovi
+
+109. Čeker komponente u verifikaciji nakon particionisanja
+	- Čeker nam treba da proverimor rezultate
+	- Referentni model
+	- Skorbord - skladisiti ocekivane rezultatae ili mu se prosledjuje ulazni stimulus, pa on vrsi transformacije
+	- Provere distribuiranih podataka i vremana = proceduralni kod, konkurentne ili neposredne tvrdnje. Živost, bezbednost i pravednost. Blizi su izvoru baga
