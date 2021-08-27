@@ -270,7 +270,12 @@ signal	   *
 	  ova metodologija, jer je razvoj na visem nivou apstrakcije, a samim tim i brze
 	  
 38. Automatska implementacija programabilnog hardvera
-	
+	- Sistemi postaju sve komplikovaniji i sve vise se implementiraju stvari u softveru
+	- Jednoprocesorski sistemi ne mogu cesto da ispune postavljene zahteve - predstavljaju usko grlo (mali instruction-level paralelizam, malo resursa za paralelno izvrsavanje)
+	- Multiprocesorski sistemi opste namene predstavljaju vise uskih grla koji rade u paraleli -> nije najbolje resenje za paralelizam (potrebna sinhronizacija, kasnjenje itd.)
+	- Jos jedno resenje za paralelizam- koriscenje DSP procesora 
+	- Takodje, pomocu EDA alata za dizajniranje procesora, moguce je praviti efikasne application-specific komponente koje u sistemu izvrsavaju "teze proracune"
+
 
 66. Menadžment zahteva i pisana specifikacija
 	- ona tri
