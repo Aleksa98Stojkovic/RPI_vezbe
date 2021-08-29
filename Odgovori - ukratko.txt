@@ -275,6 +275,130 @@ signal	   *
 	- Multiprocesorski sistemi opste namene predstavljaju vise uskih grla koji rade u paraleli -> nije najbolje resenje za paralelizam (potrebna sinhronizacija, kasnjenje itd.)
 	- Jos jedno resenje za paralelizam- koriscenje DSP procesora 
 	- Takodje, pomocu EDA alata za dizajniranje procesora, moguce je praviti efikasne application-specific komponente koje u sistemu izvrsavaju "teze proracune"
+	
+39. Potrebi i zahtevi sistem dizajnera
+	- Opste potrebe
+	- Produktivnost = modeli treba da budu takvi da se mogu ponovo iskoristiti, a i ono sto fali treba lako da se kreira
+	- Sta treba da nam model omoguci = HW/SW particionisanje, analizu algoritma, procenu performansi i potrosnje, selekciju IP-jeva, konfiguraciju, ...
+	- Zbog slozenosti danasnjih dizajnova nije vise moguce koristiti staticke metode, pa ESL metodologija omogucava primenu dinamickih metoda, ali je potrebno napraviti model
+	- Preciznost = model treba da bude precizan toliko da nam da rezultate koji odstupaju od realnih za odredjeni procenat. Sto je model slozeniji, to je i sporiji. Cesto je bolje imati
+	  brze sporiji model, jer cemo pre dobiti nekakve rezultate. Za neke karakteristike nije potrebno cak ni implementirati funkcionalnost(protok na magistralama, pomocu generatora saobracaja),
+	  vreme ne mora biti modelovano tacno u ciklus, jer SoC nije deterministicki ionako. Model je tu da na njemu vrsimo merenja koja su nam od interesa
+	- Vreme i brzina modela
+	- Cene alati = minus strana(troskovi za nabavljanje licence i integracija alata(trening inzenjera)), plus strana(brzi razvoj modela, brze se donose odredjene odluke, brze se modeli izvrsavaju, ...)
+	
+40. Potrebna preciznost za sistem dizajnere
+	- Preziznost rezultata modela se dobija biranjem komponenti i njihovim konfigurisanjem. Dobijeni rezultati treba da budu u odredjenim okvirima
+	- Preciznost se odnosi na pouzdanje koje dizajner ima u rezultate
+	- Nije nuzno implementirati sve funkcionalnosti, primer za generatore saobracaja i protok
+	- Efekti nekih algoritama se mogu razmotriti iako nisu napisani, ali samo ako su njihovi resursi ograniceni
+	- Treba modelovati i neki aspekt vremena, ali ne skroz detaljno
+	- Komponente se konfigurisu u skladu sa prosecnim opterecenjem, sem za one koje su kriticne zbog ogranicenja u relanom vremenu
+	- Pored vremena danas je bitna i potrosnja, puno elektronike na baterije, a tehnologija baterija ne napreduje
+	- Model je alat koji sluzi za dobijanje razlicitih merenja
+	
+41. Brzina i vreme za sistem dizajnere
+	- Cilj ESL metodologije je da se razvoj SW zapocne pre nego sto uopste postoji HW
+	- Ovo moze dovesti do toga da odredjeni delovi dizajna ne postoje dok neke imamo od ranije
+	- Tada je potrebno koristiti alate koji ce da objedine sve specifikacije i ideje koje postoje za dati dizajn
+	- Bolje imati sporiji model ranije, nego cekati duze na brzi
+	- Jedan fora je sa generatorima saobracaja
+	
+42. Potrebe i zahtevi softverskog tima
+	- Opsti zahtevi
+	- ESL omogucava raniji razvoj SW(bolje se definise interfejs izmedju HW i SW), softverski tim koristi modele kako bi dizajnirao i debagovao HW i SW komponente sistema
+	- SW je daleko slozeniji za razvoj od HW, treba obratiti paznju prilikom dizajna SW da on moze da se pokrene iako se dobije nova verzija HW
+	- Preciznost modela = ne treba nam preterano precizan model, jer u ovoj fazi razvoja ni HW nije dovoljno razradjen i nemamo preterano puno info, 
+	  takodje mozemo da konfigurisemo model tako da lako ispitamo neke situacije. Najbitnije za SW tim je programski pogled(registri) i odredjene info u vidu broja ciklusa i statistike kesa
+	- Troskovi alata = SW alati su nesto pristupacniji zbog veceg trzista
+
+43. Potrebna i registraska preciznost za softverski tim
+	- Ako radi na modelu, radice i za prave(LAZ)
+	- Model ne treba da bude preterano precizan, jer obicno u ovoj fazi HW u ranom razvoju, pa ni ne mozemo znati njegove karakteristike
+	- Takodje, kod modernih SoC se frekvencija menja u zavisnoti od temperature, baterije itd. pa ni to nije konstantno
+	- ESL modeli mogu da pruze neke osobine koje realna HW nema
+	- Mozemo da konfigurisemo model i brzo ispitamo odredjene situacije(Ono sa kesom)
+	- Najbitnije je za softverski tim da ima programerski pogled, odnosno pristup registrima kojima bi inace pristupao u realnom HW
+	- Model moze da da i dodatne info u vidu aproksimativnog broja ciklusa koji je potreban da bi se odredjeni deo SW izvrsio. Ovo moze pomoci da bi se optimizovao kod.
+	  Dobri modeli daju i statistiku kesa
+	- Nema smisla zahtevati tacan broj ciklusa, jer su sistemi ionako nedeterministicki zbog velikog broj prekida
+	
+44. Performanse modela koji se izvrsava za softverski tim, klasifikacija modela na osnovu performansi
+	- Performane modela se odnose na brzinu njegovog izvrsavanja
+	- Cesto se misli da model treba da rade u realnom vremenu
+	- Ranije dobijen model znaci vise vremena provedeno sa njim
+	- Vrste
+		1. Interpretirani - stand alone model
+		2. Interpretirani - slave model
+		3. Cache line just in time model
+		4. Cache page just in time model
+		5. Model koji se u potpunosti izvrsava sa host instrukcijama
+
+45. Interpretirani samostalni modeli za softverski tim
+	- Koristimo alate da generise binarni fajl i onda se instrukcije interpretiraju
+	- Koristimo iste alate koje bismo koristili i za realan HW
+	- Simuliramo faze zahvatanja, ucitavanja, izvrsavanja i upisivanja rezultata nazad
+	- Model je jednostavan za razumeti i konstruisati
+	- Jako je spor model
+	- Nema aspekte strukture, odnosno protocne obrade i broja funkcionalnih jedinica(mozemo dodati, ali bude jos sporije), ne daje dovoljno tacnu procenu broja ciklusa
+	- Kad se uklopi u sistem potrebno je sinhronizovati model sa ostalim komponentama
+	- Model ima memorijski interfejs(deljena memorija), imamo API koji sluzi za komunikaciju sa tim modelom
+
+46. Interpretirani slave modeli za softverski tim
+	- Ovi modeli su i dalje interpretirani, ali su sada slave. Ne koriste se preko deljene memorije nego se instancioniraju kao komponenta
+	- To omogucava bolju integraciju u sistemski model, recimo, napisan u SystemC-u
+	- I dalje nemaju svest o vremenu, pa je potrebno voditi racuna o sinhronizaciji, spori su i dalje
+
+47. Cache line just in time modeli za softverski tim
+	- Da bismo ubrzali model moramo nekako da imamo manji broj host instrukcija po simuliranoj instrukciji
+	- Cache line JIT podrazumeva da se uzmu instrukcije koje se nalaze u liniji simuliranog kesa i da se jednom kompajliraju za host,
+	  nakon toga, ako su opet potrebne(a bice, jer je kes u pitanju), onda mozemo da koristimo vec translirane host instrukcije i time ustedimo na interpretaciji
+	- Uzimamo instrukcije iz jedne linije, ali izmedju dve naredbe uslovong skoka(jer ne znamo gde ce se izvrsavanje dalje nastaviti)
+	- Model moze da da preciznu procenu broja ciklusa
+	
+48. Cache page JIT modeli za softverski tim
+	- Uzimamo cele stranice u kesu
+	- Model je jos brzi
+	- Gubimo na preciznosti, jer ne znamo tacno gde jedna instrukcija pocinje, a gde se zavrsava
+	- Tri teze: Moraju se pratiti stranice u memoriji, instrukcije nisu ogranicene, nije dopustivo da se izvri cela strana, posto moze da traje beskonacno dugo
+
+49. Modeli kompajlirani na host masini za softverski tim
+	- Najbrzi su, jer nema interpretiranja instrukcija
+	- Problem je sto ne mozemo da koristimo alate koji bi se koristili za realan hardver
+
+50. Potrebe i zahtevi hardverskog tim
+	- HW timu je potreban veci broj razlicitih modela sa razlicitom preciznoscu
+	- Iako je danas dizaj baziran na platformi i vecina stvari se svodi na konfiguraciju i dalje postoji potreba da se napravi bar jedan novi IP
+	- Najinteresantnija je verifikacija na nivou sistema, gde treba proveriti procenu protoka i performanse kako bi smo utvrdili da li su dobri semafori i tacke sinfornizacije
+	- Sinhronizacija delova sistema postaje sve slozenija sa porastom broja podsistema, a time i mogucih domena takt signala
+	- Zahtev je da se interfejsi komponenti standardizuju, kako bi lakse ponovo iskoristili datu komponentu
+
+	
+61. ESL tok - objasniti probleme sa bihevijalnom sintezom
+	- Bihevijalna sinteza = opisuje se dizajn na visem nivou apstrakcije, te se koriste alati sa sintezu RTL modela od tog opisa
+	- Treba voditi racuna o tome sta je dozvoljeno, a sta ne u HW
+	- Problemi su ulazni jezik, tajming i verifikacija
+	- Ulazni jezici nisu bili dobri(Verilog i VHDL)
+	- Algoritmi za tajming nisu bili dobri(suvise su optimisticni)
+	- Verifikacija je bila otezana zbog nepouzdanog tajminga
+
+62. ESL tok - objasniti prednosti ESL sinteze
+	- ESL sinteza ispravlja probleme bihevijalne sinteze
+	- C se koristi, pretrazivanje arhitekturalnih modela sada predstavlja implementaciju sa profinjenjima u strukturi, konkurentnosti, funkcionalnim jedinicam, ...,
+	  konkurentnost se postize uvodjenjem sinhronizacione interprocesorske komunikacije, sirine za podatke
+	- tajming je sada bolji, kasnjenje = kasnjenje logike + kasnjenje rutiranja
+	- verifikaciono okruzenje se moze ponovo koristiti, imamo modelovanje na nivou transakcija(TLM)
+	- Veca produktivnost
+	- Iskusan RTL inzenjer barata sa kompromisima, a dobar inzenjer ESL sinteze barata sa ogranicenjima
+	- Ogranicenja su nuzna, jer je problem sinteze NP kompletan i multidimenzionalan, iammo lokalna i globalana ogranicenja
+	- Mozemo ranije da ispitamo prostor dizajna
+	
+65. ESL tok - problemi
+	- HLS pravi problem verifikatorima, jer male promene u bihevijalnom opisu generisu drasticno drugaciji RTL opis, sto je problematicno za pristup prozirne kutije
+	- Nemoguce je raditi samo na visem nivou apstrakcije i pouzdati se da ce alati sve uraditi korektno
+	- Moguce je da ce napraviti odredjenu gresku
+	- Takodje, postoje velike promene pri prelasku sa jednog nivou na drugi, pa je zato uvek potrebno zasmisljati o tome sta ce biti na nizem nivou
+	- Dodaje se logika i za debug(DfT), sto dodatno unosi velike promene o kojima treba razmisljati
 
 
 66. Menadžment zahteva i pisana specifikacija
