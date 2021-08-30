@@ -372,7 +372,120 @@ signal	   *
 	- Najinteresantnija je verifikacija na nivou sistema, gde treba proveriti procenu protoka i performanse kako bi smo utvrdili da li su dobri semafori i tacke sinfornizacije
 	- Sinhronizacija delova sistema postaje sve slozenija sa porastom broja podsistema, a time i mogucih domena takt signala
 	- Zahtev je da se interfejsi komponenti standardizuju, kako bi lakse ponovo iskoristili datu komponentu
+	- ESL nam daje model koji predstavlja neku osnovu za dalji razvoj HW. Taj model se ili profinjuje ili se koriste alati za automatsku sintezu(nisu savrseni)
+	- Ako se ne koriste alati, onda je potrebno obratiti dosta paznje na verifikaciju
+	- Verifikaciono okruzenje moze poticati i od SystemC modela(kosimulacija), to nam omogucava da verifikaciono okruzenje bude slozeno koliko i realan drajver
+	- Verifikaciono okruzenje postaje programabilno i navodi IP kroz razna stanja kako bi ispitao njegovu korektnost
 
+51. Verifikacioni zahtvei hardverskog tima
+	- ESL metodologija omogucava verif i SW inzenjerima da istestiraju HW blok iz perspektive realnog softvera
+	- Pored toga HW moze imati odredjene zahteve koji nisu vidljivi iz perspektive SW. Na primer ne mozemo da vidimo izlaz iz
+	  LCD kontrolera, ali nam je svakako korisno da iniciramo iz SW neki ispis poznatog obrasca na displej
+	- ESL omogucava automatsko generisanje, cuvanje i kontrolu sistemski testova
+	- Kosimulacija = zamenjujemo neke blokove sa njihovim implementacijama i tada ostatak model postaje okruzenje, sluzi vise za detekciju nekih sistemskih problema, a ne detaljno ispitivanje
+	- Koverifikacija = programski blokovi se zamenjuju sa modelima koji simuliraju odrdjene slucajeve koriscenja, ubrzava simulaciju
+
+52. ESL tok - reprezentacija dizajna tokom razvoja, navesti nivoe i objasniti
+	- ESL tok nam omoguciva da pri prelasku sa jednog nivou na drugi nivo apstrakcije(gde se povecava kompleksnot) ne izgubimo namenu dizajna
+	- Product market zahtevi - zahtevi krajnjeg korisnika vezani za funkcionalnost i fizicke karakteristike uredjaja
+	- Funkcionalna specifikacija - opis iz perspektive crne kutije
+	- Arhitekturalni model - HW/SW particionisanje
+	- Specifikacija HW i SW dizjana - opis iz perspektive prozirne kutije
+	- Bihevijalni i funkcionalni modeli SW i HW - opisujemo ponasanja uz ili bez vremenskih aspekata(ako je bez, onda je cisto funkcionalan model)
+	- RTL i softverski model - detaljni tajming i ponasanje
+	- Model na nivou celija i embedded production software - model na nivou celija automatski sintetizujemo od RTL modela, a softver se dobija automatski od SW modela ili rucno
+	- Layout - geometrijska struktura komponenti HW i njihova povezanost
+
+53. ESL tok - cilj dizajna
+	- Cilj dizajna zapocinje u glavi coveka
+	- Ta info se obogacuje dodavanje novih info i na taj nacin prelazimo sa jednog na drugi nivo apstrakcije
+	- Treba paziti da se prilikom prelaska ne izgubi prvobitni cilj dizajna
+	- Jedno tumacenje je da se prelaskom na nizi nivo apstrakcije uklanjaju stepeni slobode
+	- Tokom razvoja mi donosimo razne arhitekturalne odluke. One ne postoje samo na najvisem nivou, vec su prisutne tokom svih faza
+	- Prvobitni prelazi su manuelni(specifikacija -> RTL i softver), dok su ostali polu ili skroz automatizovani
+	- U buducnosti ce se automatizacija pojaviti i na visim nivoima, npr. prelaz sa bihevijlanog opisa na RTL ili cemo samo konfigurisati IP blokove ili birati koji nam trebaju
+
+54. ESL tok - navesti korake u razvoju i objasniti moguce pristupe implementaciji koraka
+	- Specifikacija i modleovanje
+	- Analiza pre particionisanja
+	- Particionisanje
+	- Analiza posle particionisanja i debagovanje
+	- Verifikacija posle particionisanja
+	- Implementacija HW i SW
+	- ESL podrzava top down pristup, gde idemo od najapstraktnijeg koraka(specifikacije) ka samoj implementaciji, ali ovo je idealizovano
+	- Cesto se dizaj bazira na platformi gde odredjene komponente vec postoje, pa je ovo middle out dizajn
+	- Ako neki IP radimo od nule, ali odmah u RTL-u bez sistemskih koraka, to predstavlja bottom up pristup
+
+55. ESL tok - objasniti ukratko korak specifikacije i modelovanja, navesti vrste specifikacije i jezike za modelovanje koji se koriste u ovom koraku
+	- Specifikacija i modelovanje - obuhvatamo opis sistema i ogranicenje i namenu proizvoda
+	- Specifikacija moze biti izvrsna ili pisana prirodnim jezikom
+	- Specifikacija treba da ima odredjeni nivo nedorecenosti kako bismo istinski pretrazili prostor dizajna, trebalo bi da ima sto manje implementacijskih ogranicenja
+	- Ne mozemo bas imati specifikaciju bez razmatranja implementacije, jer bismo mogli da specificiramo nesto sto ne moze da se implementira
+	- Treba videti da li koristimo platformu, jer to moze ozbiljno da utice na specifikaciju, pri cemu zelimo da kroz sve faze zadrzimo nedorecenost u specifikaciji
+	- HW i SW se u ESL metodologiji razvijaju konkurentno
+	- U idelanom svetu softver diktira sta ce se implementirati u hardveru(samo delovi SW koji su suvise zahtevni se implementiraju u HW)
+	- Izvrsna specifikacija - funkcionalni i bihevijalni opis sistema koji kada se pokrene kao racunarski program ispoljava ciljano ponasanje dizajna
+	- Izvrsna arhitekturalna specifikacija - sluzi nam da ispitamo razne opcije za dizajn i koncepte dizajna(crna kutija)
+	- Izvrsna dizaj specifikacija - obazire se na kljucne odluke vezane za strukturu mikroarhitekture i ispoljava ponsanje sistema u smislu prozirne kutije, ali na visem nivou
+	- Single sourcing, jezici(MATLAB, SystemC, System Verilog, python, ...)
+	- Sve vise je prisutan razvoj na bazi modela, gde se oni profinjuju kako bismo dobili model na nizem nivou apstrakcije
+	- Odlazemo detalje implementacije za sto kasnije
+
+56. ESL tok - objasniti ukratko korak analize pre particionisanja
+	- Vrsimo analize kako bismo procenili razne karakteristike sistema
+	- U vremenkom domenu mozemo da ispitamo nivo paralelizma u algoritmu
+	- Prostorni domen - koliko prostora je potrebno za upravljacki deo algoritma, a koliko za sam deo za obradu
+	- Mozemo proceniti potrosnju. Spekulativno izvrsavanje povecava performanse, ali i potrosnju. Kesiranje moze da smanji potrosnju.
+	- Domen slozenosti - vece performanse -> teza verifikacija
+	- Time to market moze da ogranici sve prethodne optimizacije, ako one zahtevaju previse vremena
+	- Tokom ove faze proconjuju se troskovi i priprema se za particionisanje primenom veceg broja analiza
+	- Staticka analiza = formalne metode koje se koriste kada nemamo izvrsni model, a nekad se i koriste u kombinaciji sa dinamickim analizama
+	- Slozenost sistema = mozemo da primenimo function point analizu(potice iz SW) da na osnovu dokumenta za specifikaciju procenimo performanse
+	- Koriscenjem platforme se skracuje time to market, a time i troskovi razvoje, jer imamo vecu iskoristivost, ali se ogranicavamo u fazi particionisanja
+	- Dinamicka analiza = pokretaju se simulacije i mozemo dobiti neke preciznije procene vezane za vremenske performanse(protok i kasnjenje), 
+	  procenjujemo proracun, potrosnju i komunikaciju
+	- Algoritamska analiza = mozemo da odradimo konverziju iz fp u fxp i procenimo preciznost i potreban broj bita
+	- Izvrsni modeli su sami po sebi implementacije i imaju implementacijske artifakte
+	- Akademija = previse analizira, industrija = potpuno batali(nije pravi posao)
+	
+57. ESL tok - objasniti ukratko korak particionisanja dizajna
+	- Particionisanje je proces podele algoritma na deo koji ce se implemenitari u SW i deo koji ce se implementirati u HW(moze i SW/SW i HW/HW)
+	- funkcionalana dekompozicija = specifikacija lisena implementacijskih detalja, paralelizam i ona dva nacina(jezici i alati za automatsko)
+	- arhitekturalni opis i particionisanje = osnovni blokovi koji ispoljavaju ponasanja dela sistema, mapiranje(i prica o pltaformi), 
+	  nacini da se mapira(sukcesivno profinjenje i eksplicitno mapiranje), razni nivou apstrakcije korisceni za opis modela
+	- HW aprticionisanje = danas bazirano na platformi, sve se gura u SW, veci znaca verif SW
+	- SW particionisanje = midlver, firmver, biblioteke, RTOS, ..., procesori(broj i tipovi), podela SW na procesore i njihova sinhronizacija, podela SW na jednom procesoru(algoritmi za planiranje i zamena konteksta)
+	- Rekonfigurablini proracun = fleksibilan HW, azuriranje(jednom samo, mesecno, gosisnje, ...), tesko programiranje, dva nacina(kao funkcionalne jedinice za upravljacki CPU ili kao koprocesor za glavni CPU)
+	- Implementacija komunikacije = template ili sinteza interfejsa(dva uslova, ono za prosecni protok i ono za FSM)
+
+58. ESL tok - objasniti ukratko korak analize nakon particionisanja i otklanjanje gresaka
+
+59. ESL tok - objasniti ukratko korak verifikacije nakon particionisanja
+	- Verifikujemo da li je ciljno ponasanje odrzano u modelu nakon particionisanja
+	- Poredimo model sa viseg nivoa apstrakcije, imamo dve verifikacije(ovu i verif implementacije)
+	- Kako proveriti profinjenja? -> koraci
+	- Verifikaciono planiranje, pravljenje verif okruzenja, analiza rezultata
+	- Planiranje - dokument koji opisuje probleme i resenja, info o DUT-u, opis karakteristika DUT-a iz perspektive crne i prozirne kutije,
+      specificira komponente verif okruzenja, model pokruvenosti
+	- Ogranicenja definisu validan prostor stanja, koji se kasnije ispituje sa statickim i dinamickim metodama
+	- Resenja koriste dinamicke i staticke metode i odredjuju kakve ce biti komponente verifikacionog okruzenja(ceker, pokrivenost, monitor, stimulus)
+	- Obicno koristimo randomizovani ograniceni stimulus
+	- Za implementaciju okruzenja koriste se HVL jezici
+	- Bring up testovi i regresija
+	- Otkrivanje, dijagnostika i resavanje problema
+	- Pracenje progresa kroz pokrivenost(funkcionalna ili koda ili neka apstraktna)
+	- Obicno koristimo randomizovani ograniceni stimulus
+
+60. ESL tok - objasniti ukratko korak hardverske implementacije
+	- HW dizajn - pisanje modela koji mogu da se sintetisu u model na nivou kapija, RTL modelovanje ili HLS
+	- Ima dosta odluka koje treba doneti - protocna obrada i deljenje resursa
+	- Ako se koristi sinteza treba videti da li je dobije opis u skladu sa prethodnim
+	- Ekstenzibilni procesor - puno parametara koje konfigurisemo za datu namenu(npr SIMD instrukcije mozemo ukljuciti za DSP namene)
+	- DSP koprocesor - optimizovani procesor za DSP primene, memorijski se mapira u adresni prostor CPU
+	- VLIW koprocesori - biramo broj i tip funkcionalnih jedinica na osnovu analize algoritma(koliko operacija moze u paraleli i kog su tipa), isto je koprocesor ko DSP
+	- Namesnki koprocesor - koprocesor se dizajnira za datu namenu, ima namesnki data path i control path
+	- ASIC i FPGA
+	- RTL flow se integrise u ESL flow
 	
 61. ESL tok - objasniti probleme sa bihevijalnom sintezom
 	- Bihevijalna sinteza = opisuje se dizajn na visem nivou apstrakcije, te se koriste alati sa sintezu RTL modela od tog opisa
@@ -392,6 +505,22 @@ signal	   *
 	- Iskusan RTL inzenjer barata sa kompromisima, a dobar inzenjer ESL sinteze barata sa ogranicenjima
 	- Ogranicenja su nuzna, jer je problem sinteze NP kompletan i multidimenzionalan, iammo lokalna i globalana ogranicenja
 	- Mozemo ranije da ispitamo prostor dizajna
+	
+63. ESL tok - ukratko objasniti korak softverske implementacije
+	- Softver moze da ima vise uloga
+	- Ranije smo imali vodopad metodologiju gde se cekao hardver kako bi se zapoceo razvoj SW
+	- SW cesto koristimo da bismo prikrili HW bagove
+	- ESL metodologij zahteva da imamo veci broj modela SW koji se razvijaju zajedno sa HW i profinjuju sve dok ne dobijemo jedno jedinstveno HW/SW resenje
+	- Performanse su se merile u MIPS-ima(ali ne daje pravi pogled)
+	- Procenjujemo samu kompleksnos proracuna i zauzece memorije, kao i pristup memoriji
+	- Jezici i alati koji se korite za implementaciju softvera slicni su onima koji se koriste za ESL razvoj SW modela(bilo tacno do 2010. sada su bas drugaciji)
+	- Mozemo koristiti alate koji se zakace na pravi HW ili na virtualnu platformu
+	- Kompromis izmedju brzine izvrsavanja i preciznosti modela(precizniji model se spore izvrsava), modele klasifikujemo po narednim dimenzijama: sistemski domen, domen vremenske preciznosti, izvrsa platforma, performanse za realno vreme
+	- pored VP i samog HW mozemo imati FPGA HW emulator i to koristiti kao platformu za SW i radne stanice koje imaju hardverske akceleracije
+	- bitna nam je preciznost u vremenskom domenu, npr bitne su situacije kad se desi prekid
+	- ESL metodologija nam daje punu vidljivost sistema, pa je lakse traziti gresku, nego u samom cipu
+	- Softverski model pisemo, jer cemo kasnije imati neke promene, minimalno za komunikaciju sa samim HW, ali su te promene obicno drasticnije, zato je implementacija uopste potrebna
+	
 	
 65. ESL tok - problemi
 	- HLS pravi problem verifikatorima, jer male promene u bihevijalnom opisu generisu drasticno drugaciji RTL opis, sto je problematicno za pristup prozirne kutije
